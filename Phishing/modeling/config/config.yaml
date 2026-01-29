@@ -1,0 +1,184 @@
+# ===================================================================
+# CONFIGURACIÓN DEL PROYECTO - PHISHING EMAIL DETECTION
+# Versión local (sin Azure ML)
+# ===================================================================
+
+project:
+  name: "phishing_detection_local"
+  version: "1.0.0"
+  description: "Sistema de detección de phishing en emails usando ML"
+  author: "Data Science Team"
+
+# ===================================================================
+# CONFIGURACIÓN DE DATOS
+# ===================================================================
+data:
+  # Rutas a los datasets
+  processed_data_dir: "../processed_data"
+  train_file: "train.csv"
+  test_file: "test.csv"
+  clean_file: "CEAS_08_clean.csv"
+
+  # Parámetros de datos
+  test_size: 0.2  # Si se hace split manual
+  random_state: 42
+
+  # Información del dataset
+  total_samples: 39154
+  train_samples: 31323
+  test_samples: 7831
+
+  # Distribución de clases
+  class_distribution:
+    legitimate: 0.4422  # 44.22%
+    phishing: 0.5578     # 55.78%
+
+# ===================================================================
+# CONFIGURACIÓN DE FEATURE ENGINEERING
+# ===================================================================
+features:
+  # TF-IDF parameters
+  tfidf:
+    max_features: 1000
+    ngram_range: [1, 2]  # Unigrams y bigrams
+    min_df: 5            # Mínima frecuencia de documento
+    stop_words: 'english'
+    lowercase: true
+    strip_accents: 'unicode'
+
+  # Features numéricas a crear
+  numeric_features:
+    - subject_length
+    - subject_words
+    - subject_special
+    - body_length
+    - body_words
+    - body_special
+    - url_count
+    - urls
+    - sender_domain_encoded
+    - subject_sentiment
+    - body_sentiment
+    - subject_body_ratio
+    - special_chars_ratio
+    - has_urgent
+    - has_free
+    - has_click
+
+  # Parámetros de domain encoding
+  domain_encoding:
+    top_n_domains: 50  # Codificar top 50 dominios más frecuentes
+
+# ===================================================================
+# CONFIGURACIÓN DE MODELOS
+# ===================================================================
+models:
+  # Random state global para todos los modelos
+  random_state: 42
+
+  # Logistic Regression
+  logistic_regression:
+    max_iter: 1000
+    solver: 'lbfgs'
+    penalty: 'l2'
+    C: 1.0
+    n_jobs: -1
+    class_weight: null  # Puede ser 'balanced' si hay desbalance
+
+  # Random Forest
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 2
+    min_samples_leaf: 1
+    max_features: 'sqrt'
+    n_jobs: -1
+    class_weight: null
+
+  # SVM (Support Vector Machine)
+  svm:
+    kernel: 'rbf'
+    C: 1.0
+    gamma: 'scale'
+    probability: true  # Necesario para ROC-AUC
+    cache_size: 1000   # MB de cache
+    max_iter: -1
+
+  # Gradient Boosting
+  gradient_boosting:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 5
+    min_samples_split: 2
+    min_samples_leaf: 1
+    subsample: 1.0
+    max_features: null
+
+# ===================================================================
+# CONFIGURACIÓN DE EVALUACIÓN
+# ===================================================================
+evaluation:
+  # Métrica principal para seleccionar mejor modelo
+  primary_metric: 'f1_score'
+
+  # Métricas a calcular
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - roc_auc
+
+  # Cross-validation (opcional)
+  cross_validation:
+    enabled: false
+    n_splits: 5
+    stratified: true
+
+# ===================================================================
+# CONFIGURACIÓN DE SALIDAS
+# ===================================================================
+outputs:
+  # Directorios de salida
+  base_dir: "../modeling/outputs"
+  models_dir: "models"
+  reports_dir: "reports"
+  features_dir: "features"
+
+  # Nombres de archivos
+  best_model_file: "best_model.pkl"
+  model_info_file: "model_info.json"
+  tfidf_vectorizer_file: "tfidf_vectorizer.pkl"
+
+  # Reportes a generar
+  generate_reports:
+    confusion_matrix: true
+    roc_curves: true
+    classification_report: true
+    feature_importance: true  # Solo para tree-based models
+
+# ===================================================================
+# CONFIGURACIÓN DE LOGGING Y VERBOSIDAD
+# ===================================================================
+logging:
+  level: 'INFO'  # DEBUG, INFO, WARNING, ERROR
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  save_to_file: true
+  log_file: 'outputs/training.log'
+
+# ===================================================================
+# CONFIGURACIÓN DE EJECUCIÓN
+# ===================================================================
+execution:
+  # Modo de ejecución
+  mode: 'local'  # local (sin Azure ML)
+
+  # Paralelización
+  n_jobs: -1  # -1 para usar todos los cores disponibles
+
+  # Reproducibilidad
+  set_random_seed: true
+  random_seed: 42
+
+  # Warnings
+  suppress_warnings: true

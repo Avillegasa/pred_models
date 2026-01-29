@@ -1,0 +1,229 @@
+# ===================================================================
+# CONFIGURACIÓN DEL PROYECTO - ACCOUNT TAKEOVER DETECTION
+# Versión local (sin Azure ML)
+# ===================================================================
+
+project:
+  name: "account_takeover_detection"
+  version: "1.0.0"
+  description: "Sistema de detección de Account Takeover en logins usando ML"
+  author: "Data Science Team"
+
+# ===================================================================
+# CONFIGURACIÓN DE DATOS
+# ===================================================================
+data:
+  # Rutas a los datasets
+  processed_data_dir: "../../processed_data"
+  dataset_file: "rba_balanced.csv"
+
+  # Parámetros de datos
+  test_size: 0.2  # 80% train, 20% test
+  random_state: 42
+  stratify: true  # CRÍTICO: Mantener proporción de clases
+
+  # Información del dataset balanceado
+  total_samples: 141141
+  ato_cases: 141
+  normal_cases: 141000
+
+  # Distribución de clases
+  class_distribution:
+    normal: 0.999001      # 99.9001%
+    account_takeover: 0.000999  # 0.0999%
+
+  # Ratio
+  ratio: 1000  # 1000 normal : 1 ATO
+
+# ===================================================================
+# CONFIGURACIÓN DE FEATURE ENGINEERING
+# ===================================================================
+features:
+  # Features temporales
+  temporal_features:
+    - hour
+    - day_of_week
+    - day_of_month
+    - month
+    - is_weekend
+    - is_night
+    - is_business_hours
+
+  # Features de comportamiento
+  behavioral_features:
+    - ip_changed
+    - country_changed
+    - browser_changed
+    - device_changed
+    - os_changed
+    - time_since_last_login_hours
+    - is_rapid_login
+    - is_long_gap
+
+  # Features agregados
+  aggregated_features:
+    - ip_count_per_user
+    - country_count_per_user
+    - browser_count_per_user
+    - device_count_per_user
+    - total_logins_per_user
+    - success_rate_per_user
+    - user_count_per_ip
+    - is_suspicious_ip
+
+  # Features de red
+  network_features:
+    - rtt_zscore
+    - is_abnormal_rtt
+
+  # Features numéricas directas del dataset
+  numeric_features:
+    - Round-Trip Time [ms]
+    - ASN
+    - Login Successful
+    - Is Attack IP
+
+  # Features categóricos a encodear
+  categorical_features:
+    - Browser Name and Version
+    - OS Name and Version
+    - Device Type
+    - Country
+    - Region
+    - City
+
+# ===================================================================
+# CONFIGURACIÓN DE MODELOS
+# ===================================================================
+models:
+  # Random state global para todos los modelos
+  random_state: 42
+
+  # NOTA: Todos los modelos usan class_weight='balanced'
+  # para manejar el desbalance extremo (1:1000)
+
+  # Logistic Regression
+  logistic_regression:
+    max_iter: 1000
+    solver: 'lbfgs'
+    penalty: 'l2'
+    C: 1.0
+    n_jobs: -1
+    class_weight: 'balanced'  # CRÍTICO para desbalance
+
+  # Random Forest
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 5
+    min_samples_leaf: 2
+    max_features: 'sqrt'
+    n_jobs: -1
+    class_weight: 'balanced'  # CRÍTICO para desbalance
+
+  # SVM (Support Vector Machine)
+  svm:
+    kernel: 'rbf'
+    C: 1.0
+    gamma: 'scale'
+    probability: true  # Necesario para ROC-AUC
+    class_weight: 'balanced'  # CRÍTICO para desbalance
+    cache_size: 1000   # MB de cache
+
+  # Gradient Boosting
+  gradient_boosting:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 5
+    min_samples_split: 5
+    min_samples_leaf: 1
+    subsample: 0.8
+    max_features: null
+
+# ===================================================================
+# CONFIGURACIÓN DE EVALUACIÓN
+# ===================================================================
+evaluation:
+  # Métrica principal para seleccionar mejor modelo
+  primary_metric: 'f1_score'  # Balance entre Precision y Recall
+
+  # Métricas a calcular
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - roc_auc
+    - average_precision  # AUC-PR (mejor para desbalance)
+    - false_positive_rate
+    - false_negative_rate
+
+  # Objetivo de negocio
+  business_objective:
+    priority: 'recall'  # Detectar todos los ATO posibles
+    acceptable_fpr: 0.05  # Max 5% de falsos positivos aceptables
+
+  # Cross-validation (opcional, no usado por ahora)
+  cross_validation:
+    enabled: false
+    n_splits: 5
+    stratified: true
+
+# ===================================================================
+# CONFIGURACIÓN DE SALIDAS
+# ===================================================================
+outputs:
+  # Directorios de salida
+  base_dir: "../outputs"
+  models_dir: "models"
+  reports_dir: "reports"
+  features_dir: "features"
+
+  # Nombres de archivos
+  best_model_file: "best_model.pkl"
+  model_info_file: "model_info.json"
+  label_encoders_file: "label_encoders.pkl"
+  features_file: "features.csv"
+
+  # Reportes a generar
+  generate_reports:
+    confusion_matrix: true
+    roc_curves: true
+    precision_recall_curves: true
+    classification_report: true
+    error_analysis: true
+
+# ===================================================================
+# CONFIGURACIÓN DE LOGGING Y VERBOSIDAD
+# ===================================================================
+logging:
+  level: 'INFO'  # DEBUG, INFO, WARNING, ERROR
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  save_to_file: true
+  log_file: 'outputs/training.log'
+
+# ===================================================================
+# CONFIGURACIÓN DE EJECUCIÓN
+# ===================================================================
+execution:
+  # Modo de ejecución
+  mode: 'local'  # local (sin Azure ML)
+
+  # Paralelización
+  n_jobs: -1  # -1 para usar todos los cores disponibles
+
+  # Reproducibilidad
+  set_random_seed: true
+  random_seed: 42
+
+  # Warnings
+  suppress_warnings: true
+
+# ===================================================================
+# NOTAS IMPORTANTES
+# ===================================================================
+# 1. Dataset balanceado: 141K registros (141 ATO + 141K normales)
+# 2. Ratio 1:1000 entrenable con class_weight='balanced'
+# 3. Métrica principal: F1-Score (balance Precision/Recall)
+# 4. Objetivo: Maximizar Recall (detectar ATOs) minimizando FPR
+# 5. NO usar Accuracy (inútil con desbalance extremo)

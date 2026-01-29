@@ -1,0 +1,20 @@
+# Brute Force Detection API - Required Packages
+#
+# NOTA: Estas dependencias ya están instaladas en el venv compartido de cbproy
+#       No es necesario instalarlas nuevamente
+#       Este archivo es solo para documentación
+
+# API Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.3
+python-dotenv>=1.0.0
+python-multipart>=0.0.21
+
+# Machine Learning
+joblib>=1.3.2
+scikit-learn>=1.8.0
+numpy>=1.26.3
+pandas>=2.1.4
+
+# ✅ TODAS ESTAS DEPENDENCIAS YA ESTÁN EN: /home/megalodon/dev/cbproy/venv

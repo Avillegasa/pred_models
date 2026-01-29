@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "WebSearch",
+      "Bash(python3:*)",
+      "Bash(npm run build:*)",
+      "Bash(source:*)",
+      "Bash(uvicorn app:app:*)",
+      "Bash(curl:*)",
+      "Bash(unzip:*)",
+      "Bash(ls:*)",
+      "Bash(python seed_data.py:*)",
+      "Bash(python sync_alerts.py:*)"
+    ]
+  }
+}

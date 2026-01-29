@@ -1,0 +1,517 @@
+/**
+ * Reusable Component Styles
+ * Uses semantic CSS custom properties from index.css
+ */
+
+/* =============================================================================
+   PREDICTION CARD
+   ============================================================================= */
+
+.prediction-card {
+  background: linear-gradient(135deg, var(--surface-base) 0%, var(--surface-raised) 100%);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid;
+  transition: all var(--transition-normal);
+}
+
+@media (max-width: 768px) {
+  .prediction-card {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.prediction-card.prediction-safe {
+  border-left-color: var(--status-success);
+  background: linear-gradient(135deg, var(--status-success-bg) 0%, var(--surface-base) 100%);
+}
+
+.prediction-card.prediction-threat {
+  border-left-color: var(--status-danger);
+  background: linear-gradient(135deg, var(--status-danger-bg) 0%, var(--surface-base) 100%);
+}
+
+.prediction-card.prediction-warning {
+  border-left-color: var(--status-warning);
+  background: linear-gradient(135deg, var(--status-warning-bg) 0%, var(--surface-base) 100%);
+}
+
+.prediction-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.prediction-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .prediction-header {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prediction-icon {
+    font-size: 1.5rem;
+  }
+}
+
+.prediction-icon.safe {
+  color: var(--status-success);
+}
+
+.prediction-icon.threat {
+  color: var(--status-danger);
+}
+
+.prediction-icon.warning {
+  color: var(--status-warning);
+}
+
+.prediction-label {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .prediction-label {
+    font-size: var(--font-size-lg);
+    letter-spacing: 0;
+  }
+}
+
+.prediction-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+/* =============================================================================
+   CONFIDENCE METRICS
+   ============================================================================= */
+
+.confidence-section {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .confidence-section {
+    margin-bottom: 1rem;
+  }
+}
+
+.confidence-title {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.confidence-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.confidence-label {
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.confidence-value {
+  color: var(--text-accent);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .confidence-value {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.confidence-progress {
+  background: var(--surface-raised);
+  height: 1.5rem;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.confidence-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--status-success) 0%, var(--status-success-light) 100%);
+  transition: width 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.75rem;
+  color: var(--text-inverse);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.confidence-progress-bar.danger {
+  background: linear-gradient(90deg, var(--status-danger) 0%, var(--status-danger-light) 100%);
+  color: var(--text-primary);
+}
+
+.confidence-progress-bar.warning {
+  background: linear-gradient(90deg, var(--status-warning) 0%, var(--status-warning-light) 100%);
+  color: var(--text-inverse);
+}
+
+.probability-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.probability-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.probability-item:last-child {
+  border-bottom: none;
+}
+
+.probability-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.probability-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  display: inline-block;
+}
+
+.probability-dot.safe {
+  background: var(--status-success);
+}
+
+.probability-dot.threat {
+  background: var(--status-danger);
+}
+
+.probability-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+/* =============================================================================
+   METADATA INFO
+   ============================================================================= */
+
+.metadata-section {
+  background: var(--surface-raised);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .metadata-section {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+}
+
+.metadata-title {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .metadata-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .metadata-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metadata-item-label {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metadata-item-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+/* =============================================================================
+   ERROR ALERT
+   ============================================================================= */
+
+.error-alert {
+  background: var(--status-danger-bg);
+  border: 1px solid var(--status-danger);
+  border-left: 4px solid var(--status-danger);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.error-alert-title {
+  color: var(--status-danger-light);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-alert-close {
+  background: none;
+  border: none;
+  color: var(--status-danger-light);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+
+.error-alert-close:hover {
+  color: var(--status-danger);
+}
+
+.error-alert-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.error-alert-details {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  margin-top: 0.5rem;
+  font-family: 'Courier New', monospace;
+}
+
+/* Warning Alert Variant */
+.warning-alert {
+  background: var(--status-warning-bg);
+  border-color: var(--status-warning);
+}
+
+.warning-alert .error-alert-title {
+  color: var(--status-warning-light);
+}
+
+.warning-alert .error-alert-close {
+  color: var(--status-warning-light);
+}
+
+.warning-alert .error-alert-close:hover {
+  color: var(--status-warning);
+}
+
+/* =============================================================================
+   FORM INPUT WITH ICON
+   ============================================================================= */
+
+.form-input-group {
+  position: relative;
+}
+
+.form-input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: var(--font-size-base);
+  pointer-events: none;
+}
+
+.form-input-group .form-control {
+  padding-left: 2.75rem;
+}
+
+.form-error-message {
+  color: var(--status-danger-light);
+  font-size: var(--font-size-xs);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* =============================================================================
+   BADGE / TAG
+   ============================================================================= */
+
+.badge-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-custom.badge-safe {
+  background: var(--status-success-bg);
+  color: var(--status-success-light);
+  border: 1px solid var(--status-success);
+}
+
+.badge-custom.badge-threat {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-light);
+  border: 1px solid var(--status-danger);
+}
+
+.badge-custom.badge-warning {
+  background: var(--status-warning-bg);
+  color: var(--status-warning-light);
+  border: 1px solid var(--status-warning);
+}
+
+.badge-custom.badge-info {
+  background: var(--status-info-bg);
+  color: var(--status-info-light);
+  border: 1px solid var(--status-info);
+}
+
+.badge-mock {
+  background: rgba(105, 110, 121, 0.2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.text-primary {
+  color: var(--text-accent) !important;
+}
+
+.text-danger {
+  color: var(--text-danger) !important;
+}
+
+.text-warning {
+  color: var(--text-warning) !important;
+}
+
+.text-success {
+  color: var(--text-success) !important;
+}
+
+.bg-dark-custom {
+  background: var(--surface-base) !important;
+}
+
+.border-custom {
+  border-color: var(--border-default) !important;
+}
+
+/* =============================================================================
+   ANIMATIONS
+   ============================================================================= */
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

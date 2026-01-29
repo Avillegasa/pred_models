@@ -1,0 +1,40 @@
+{
+  "timestamp": "20260117_021309",
+  "dataset": {
+    "path": "../../processed_data/brute_force_balanced.csv",
+    "total_records": 763568,
+    "n_features": 60,
+    "balance": {
+      "Benign": 381784,
+      "Brute Force": 381784
+    }
+  },
+  "split": {
+    "test_size": 152714,
+    "random_state": 42,
+    "train_size": 610854
+  },
+  "models_trained": [
+    "Logistic Regression",
+    "Linear SVM",
+    "Random Forest",
+    "Gradient Boosting"
+  ],
+  "best_model": {
+    "name": "Gradient Boosting",
+    "filename": "best_model_gradient_boosting_20260117_021309.pkl",
+    "metrics": {
+      "accuracy": 0.9999410663069529,
+      "precision": 0.999947613809,
+      "recall": 0.9999345181188365,
+      "f1_score": 0.9999410659210415,
+      "roc_auc": 0.9999956538081154
+    },
+    "confusion_matrix": {
+      "TN": 76353,
+      "FP": 4,
+      "FN": 5,
+      "TP": 76352
+    }
+  }
+}

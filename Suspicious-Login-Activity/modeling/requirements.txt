@@ -1,0 +1,17 @@
+# Dependencias para Suspicious Login Activity - Account Takeover Detection
+# Versión: Python 3.8+
+
+# Data Processing
+pandas>=1.3.0
+numpy>=1.21.0
+
+# Machine Learning
+scikit-learn>=1.0.0
+joblib>=1.1.0
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Utilities
+python-dateutil>=2.8.0

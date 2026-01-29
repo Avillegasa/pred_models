@@ -1,0 +1,238 @@
+================================================================================
+   ANÁLISIS GEOGRÁFICO PROFUNDO - RBA Dataset
+================================================================================
+
+📅 Fecha: 2026-01-13 13:45:07
+📁 Dataset: rba_reduced.csv
+
+⏳ Cargando dataset...
+✅ Dataset cargado: 85,141 registros
+   • Account Takeover: 141
+   • Normal: 85,000
+
+================================================================================
+1. DISTRIBUCIÓN GEOGRÁFICA: ATOs vs Normal
+================================================================================
+
+📊 PAÍSES EN ACCOUNT TAKEOVER (Top 10):
+   RO: 79 casos (56.0%)
+   NO: 10 casos (7.1%)
+   CA: 9 casos (6.4%)
+   BR: 9 casos (6.4%)
+   ID: 9 casos (6.4%)
+   IT: 7 casos (5.0%)
+   DK: 5 casos (3.5%)
+   LV: 3 casos (2.1%)
+   CL: 3 casos (2.1%)
+   CZ: 2 casos (1.4%)
+
+📊 PAÍSES EN CASOS NORMALES (Top 10):
+   NO: 38,428 casos (45.21%)
+   US: 21,819 casos (25.67%)
+   BR: 3,429 casos (4.03%)
+   RU: 2,887 casos (3.40%)
+   PL: 2,694 casos (3.17%)
+   DE: 2,266 casos (2.67%)
+   IN: 1,326 casos (1.56%)
+   AU: 1,268 casos (1.49%)
+   GB: 1,251 casos (1.47%)
+   UA: 1,242 casos (1.46%)
+
+⚠️  PAÍSES SOBRE-REPRESENTADOS EN ATOs:
+   RO: 139.7x más frecuente en ATOs que en normales
+      ATOs: 56.0% | Normal: 0.40%
+   CA: 13.1x más frecuente en ATOs que en normales
+      ATOs: 6.4% | Normal: 0.49%
+   ID: 5.8x más frecuente en ATOs que en normales
+      ATOs: 6.4% | Normal: 1.10%
+   IT: 10.0x más frecuente en ATOs que en normales
+      ATOs: 5.0% | Normal: 0.49%
+   DK: 31.7x más frecuente en ATOs que en normales
+      ATOs: 3.5% | Normal: 0.11%
+   LV: 113.0x más frecuente en ATOs que en normales
+      ATOs: 2.1% | Normal: 0.02%
+   CL: 43.1x más frecuente en ATOs que en normales
+      ATOs: 2.1% | Normal: 0.05%
+
+================================================================================
+2. TASA DE ÉXITO/FALLO POR PAÍS
+================================================================================
+
+📊 TASA DE LOGIN EXITOSO POR PAÍS (Top 10):
+   NO : 65.48% éxito (38,438 logins | 10 ATOs)
+   US : 25.59% éxito (21,819 logins)
+   BR : 31.59% éxito (3,438 logins | 9 ATOs)
+   RU :  0.62% éxito (2,887 logins)
+   PL : 40.72% éxito (2,694 logins)
+   DE : 15.23% éxito (2,266 logins)
+   IN : 28.13% éxito (1,326 logins)
+   AU : 24.84% éxito (1,268 logins)
+   GB : 51.64% éxito (1,251 logins)
+   UA : 30.52% éxito (1,242 logins)
+
+================================================================================
+3. ROUND-TRIP TIME (RTT) POR PAÍS
+================================================================================
+
+📊 RTT PROMEDIO POR PAÍS (Top 10 países):
+   NO : Media= 618.5ms | Mediana= 537.0ms
+   US : Media=1413.0ms | Mediana=1413.0ms
+   BR : Media=   nanms | Mediana=   nanms
+   RU : Media=   nanms | Mediana=   nanms
+   PL : Media=   nanms | Mediana=   nanms
+   DE : Media=2799.0ms | Mediana=2799.0ms
+   IN : Media=1132.0ms | Mediana=1132.0ms
+   AU : Media=   nanms | Mediana=   nanms
+   GB : Media=   nanms | Mediana=   nanms
+   UA : Media=   nanms | Mediana=   nanms
+
+📊 RTT: ATOs vs Normal:
+   ATOs:   Media=673.0ms | Mediana=673.0ms
+   Normal: Media=651.4ms | Mediana=539.0ms
+   Diferencia: 21.6ms (3.3%)
+
+================================================================================
+4. CAMBIOS DE PAÍS POR USUARIO
+================================================================================
+
+📊 ESTADÍSTICAS DE CAMBIOS DE PAÍS:
+   Total cambios de país: 75,781
+   Usuarios con cambio de país: 47,858
+
+   En ACCOUNT TAKEOVER:
+      Cambios de país en ATOs: 139
+      % de ATOs con cambio de país: 98.6%
+
+📊 CAMBIOS DE PAÍS MÁS COMUNES (Top 10):
+   BR → US: 5,972 veces
+   BR → NO: 4,289 veces
+   BR → BR: 1,567 veces
+   BR → DE: 1,312 veces
+   NO → NO: 1,174 veces
+   BR → RU: 1,146 veces
+   NO → US: 1,010 veces
+   BR → PL: 844 veces
+   BR → IN: 671 veces
+   BR → AU: 588 veces
+
+================================================================================
+5. REGIONES Y CIUDADES EN ACCOUNT TAKEOVER
+================================================================================
+
+📊 TOP 10 REGIONES EN ATOs:
+   -: 75 casos (53.2%)
+   Ilfov: 15 casos (10.6%)
+   Vestland: 7 casos (5.0%)
+   Mato Grosso do Sul: 4 casos (2.8%)
+   Bucuresti: 4 casos (2.8%)
+   Riga: 3 casos (2.1%)
+   Veneto: 3 casos (2.1%)
+   Jakarta: 3 casos (2.1%)
+   Buzau: 2 casos (1.4%)
+   Hlavni mesto Praha: 2 casos (1.4%)
+
+📊 TOP 10 CIUDADES EN ATOs:
+   -: 75 casos (53.2%)
+   Petrachioaia: 15 casos (10.6%)
+   Vassenden: 7 casos (5.0%)
+   Bucharest: 4 casos (2.8%)
+   Riga: 3 casos (2.1%)
+   Coxim: 3 casos (2.1%)
+   Treviso: 2 casos (1.4%)
+   Jakarta: 2 casos (1.4%)
+   Prague: 2 casos (1.4%)
+   Sospirolo: 2 casos (1.4%)
+
+================================================================================
+6. IPs DE ATAQUE POR PAÍS
+================================================================================
+
+📊 IPs marcadas como ataque: 8,020
+   Países con IPs de ataque: 64
+
+📊 TOP 10 PAÍSES CON IPs DE ATAQUE:
+   US: 6,105 IPs de ataque (76.12%)
+   NO: 466 IPs de ataque (5.81%)
+   PL: 301 IPs de ataque (3.75%)
+   RO: 236 IPs de ataque (2.94%)
+   ID: 202 IPs de ataque (2.52%)
+   AU: 121 IPs de ataque (1.51%)
+   DE: 117 IPs de ataque (1.46%)
+   RU: 65 IPs de ataque (0.81%)
+   GB: 64 IPs de ataque (0.80%)
+   IN: 62 IPs de ataque (0.77%)
+
+================================================================================
+7. CONCLUSIONES Y PATRONES GEOGRÁFICOS
+================================================================================
+
+🎯 PATRONES IDENTIFICADOS:
+
+1. PAÍS DOMINANTE EN ATOs: RO
+   • 56.0% de todos los ATOs provienen de RO
+   • Esto es 139.7x más que en casos normales
+
+2. PAÍS DOMINANTE EN NORMALES: NO
+   • 45.21% de casos normales desde NO
+   • Sistema SSO esperado en NO
+
+3. CAMBIOS DE PAÍS:
+   • 75,781 cambios de país detectados
+   • 98.6% de ATOs tienen cambio de país
+   • Cambio de país es SEÑAL FUERTE de ATO
+
+4. ROUND-TRIP TIME:
+   • ATOs tienen RTT promedio: 673.0ms
+   • Normal tiene RTT promedio: 651.4ms
+   • Diferencia significativa: RTT puede ser feature útil
+
+================================================================================
+8. RECOMENDACIONES PARA CAMBIO DE UBICACIONES
+================================================================================
+
+💡 CONSIDERACIONES IMPORTANTES:
+
+1. MANTENER LÓGICA DE PAÍSES:
+   • País normal dominante: NO (esperado, usuarios legítimos)
+   • País ATO dominante: RO (ataques desde aquí)
+   • Al cambiar ubicaciones, MANTENER esta relación:
+     - Usuarios normales mayormente de 1 país (ej: tu país)
+     - ATOs desde países DIFERENTES (anomalía geográfica)
+
+2. PRESERVAR DISTANCIAS RELATIVAS:
+   • ATOs exitosos vienen de países LEJANOS al país principal
+   • Cambiar ubicaciones manteniendo distancias similares
+   • Ejemplo: Si cambias a México:
+     - Normal: México (mayoría)
+     - ATOs: Rumania → Argentina/Chile (lejanos)
+
+3. ROUND-TRIP TIME:
+   • RTT aumenta con distancia geográfica
+   • Al cambiar ubicaciones, RTT debe reflejar distancia
+   • Ejemplo: México → Europa = 150-250ms
+
+4. REGIONES Y CIUDADES:
+   • Usar regiones/ciudades REALES del país elegido
+   • No inventar nombres, usar geolocalización real
+   • Dataset tiene 668 regiones, 3686 ciudades
+
+5. CAMBIOS DE PAÍS:
+   • 98.6% de ATOs tienen cambio de país
+   • Este patrón DEBE mantenerse después del cambio
+   • Feature 'Country_Changed' es CRÍTICA para detección
+
+================================================================================
+✅ ANÁLISIS GEOGRÁFICO COMPLETADO
+================================================================================
+
+📋 ARCHIVOS GENERADOS:
+   • Análisis impreso en consola
+   • Dataset analizado: rba_reduced.csv
+
+🎯 PRÓXIMOS PASOS:
+   1. Revisar patrones geográficos identificados
+   2. Planificar cambio de ubicaciones manteniendo lógica
+   3. Ejecutar EDA completo con dataset reducido
+   4. Entrenar modelo con dataset optimizado
+
+================================================================================

@@ -1,0 +1,14 @@
+{
+    "fecha_creacion": "2026-01-10 14:10:08",
+    "total_registros": 39154,
+    "train_registros": 31323,
+    "test_registros": 7831,
+    "train_percentage": "80.0%",
+    "test_percentage": "20.0%",
+    "clase_0_total": 17312,
+    "clase_1_total": 21842,
+    "clase_0_percentage": "44.22%",
+    "clase_1_percentage": "55.78%",
+    "random_state": 42,
+    "stratified": true
+}

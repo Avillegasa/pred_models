@@ -1,0 +1,412 @@
+/**
+ * Global Base Styles & CSS Custom Properties
+ * Cybersecurity Dashboard - BCP Corporate Identity (Light Theme)
+ */
+
+/* =============================================================================
+   CSS CUSTOM PROPERTIES (Design Tokens as CSS Variables)
+   ============================================================================= */
+
+:root {
+  /* -------------------------------------------------------------------------
+     PRIMITIVE COLORS (Internal use only - prefer semantic tokens)
+     ------------------------------------------------------------------------- */
+  /* BCP Brand - Blue */
+  --color-blue-700: #003366;
+  --color-blue-600: #00498C;
+  --color-blue-500: #005BA8;
+  --color-blue-400: #0073C4;
+  --color-blue-100: rgba(0, 73, 140, 0.08);
+
+  /* BCP Accent - Orange */
+  --color-orange-600: #E56A00;
+  --color-orange-500: #FF7800;
+  --color-orange-400: #FF9333;
+  --color-orange-100: rgba(255, 120, 0, 0.08);
+
+  /* Neutrals - Light Theme */
+  --color-gray-900: #1A1A1A;
+  --color-gray-800: #333333;
+  --color-gray-700: #4D4D4D;
+  --color-gray-600: #666666;
+  --color-gray-500: #808080;
+  --color-gray-400: #999999;
+  --color-gray-300: #B3B3B3;
+  --color-gray-200: #E0E0E0;
+  --color-gray-100: #F0F0F0;
+  --color-gray-50: #F8F9FA;
+
+  /* Status Colors */
+  --color-red-600: #C53030;
+  --color-red-500: #E53E3E;
+  --color-red-400: #FC8181;
+  --color-red-100: rgba(229, 62, 62, 0.08);
+
+  --color-green-600: #276749;
+  --color-green-500: #38A169;
+  --color-green-400: #68D391;
+  --color-green-100: rgba(56, 161, 105, 0.08);
+
+  --color-amber-600: #D69E2E;
+  --color-amber-500: #ECC94B;
+  --color-amber-400: #F6E05E;
+  --color-amber-100: rgba(236, 201, 75, 0.08);
+
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - BACKGROUNDS (Light Theme)
+     ------------------------------------------------------------------------- */
+  --bg-primary: var(--color-white);
+  --bg-secondary: var(--color-gray-50);
+  --bg-elevated: var(--color-white);
+  --bg-hover: var(--color-gray-100);
+  --bg-accent: var(--color-blue-100);
+  --bg-accent-orange: var(--color-orange-100);
+  --bg-success: var(--color-green-100);
+  --bg-danger: var(--color-red-100);
+  --bg-warning: var(--color-amber-100);
+  --bg-info: var(--color-blue-100);
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - TEXT
+     ------------------------------------------------------------------------- */
+  --text-primary: var(--color-gray-800);
+  --text-secondary: var(--color-gray-600);
+  --text-muted: var(--color-gray-500);
+  --text-inverse: var(--color-white);
+  --text-accent: var(--color-blue-600);
+  --text-accent-orange: var(--color-orange-500);
+  --text-success: var(--color-green-500);
+  --text-danger: var(--color-red-500);
+  --text-warning: var(--color-amber-600);
+  --text-info: var(--color-blue-600);
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - BORDERS
+     ------------------------------------------------------------------------- */
+  --border-default: var(--color-gray-200);
+  --border-subtle: var(--color-gray-100);
+  --border-strong: var(--color-gray-300);
+  --border-focus: var(--color-blue-600);
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - INTERACTIVE
+     ------------------------------------------------------------------------- */
+  --interactive-primary: var(--color-blue-600);
+  --interactive-primary-hover: var(--color-blue-500);
+  --interactive-primary-pressed: var(--color-blue-700);
+  --interactive-primary-text: var(--color-white);
+
+  --interactive-secondary: var(--color-gray-100);
+  --interactive-secondary-hover: var(--color-gray-200);
+  --interactive-secondary-pressed: var(--color-gray-300);
+  --interactive-secondary-text: var(--color-gray-800);
+
+  --interactive-accent: var(--color-orange-500);
+  --interactive-accent-hover: var(--color-orange-400);
+  --interactive-accent-pressed: var(--color-orange-600);
+  --interactive-accent-text: var(--color-white);
+
+  --interactive-danger: var(--color-red-500);
+  --interactive-danger-hover: var(--color-red-400);
+  --interactive-danger-pressed: var(--color-red-600);
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - STATUS
+     ------------------------------------------------------------------------- */
+  --status-success: var(--color-green-500);
+  --status-success-light: var(--color-green-400);
+  --status-success-bg: var(--color-green-100);
+
+  --status-danger: var(--color-red-500);
+  --status-danger-light: var(--color-red-400);
+  --status-danger-bg: var(--color-red-100);
+
+  --status-warning: var(--color-amber-500);
+  --status-warning-light: var(--color-amber-400);
+  --status-warning-bg: var(--color-amber-100);
+
+  --status-info: var(--color-blue-600);
+  --status-info-light: var(--color-blue-400);
+  --status-info-bg: var(--color-blue-100);
+
+  /* -------------------------------------------------------------------------
+     SEMANTIC TOKENS - SURFACES
+     ------------------------------------------------------------------------- */
+  --surface-base: var(--color-gray-50);
+  --surface-raised: var(--color-white);
+  --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-sunken: var(--color-gray-100);
+
+  /* -------------------------------------------------------------------------
+     SIDEBAR (BCP Blue themed)
+     ------------------------------------------------------------------------- */
+  --sidebar-bg: var(--color-blue-600);
+  --sidebar-item-hover: var(--color-blue-500);
+  --sidebar-item-active: var(--color-orange-500);
+  --sidebar-text: rgba(255, 255, 255, 0.85);
+  --sidebar-text-active: var(--color-white);
+
+  /* -------------------------------------------------------------------------
+     SHADOWS (Lighter for light theme)
+     ------------------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-glow-primary: 0 0 20px rgba(0, 73, 140, 0.2);
+  --shadow-glow-accent: 0 0 20px rgba(255, 120, 0, 0.2);
+  --shadow-glow-danger: 0 0 20px rgba(229, 62, 62, 0.2);
+
+  /* -------------------------------------------------------------------------
+     TYPOGRAPHY
+     ------------------------------------------------------------------------- */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+
+  /* -------------------------------------------------------------------------
+     SPACING & RADIUS
+     ------------------------------------------------------------------------- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* -------------------------------------------------------------------------
+     TRANSITIONS
+     ------------------------------------------------------------------------- */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 250ms ease-in-out;
+  --transition-slow: 400ms ease-in-out;
+}
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family);
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Better box sizing for all elements */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Prevent horizontal overflow */
+.container, .container-fluid {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive images and media */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better table handling */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: 1.75rem; }
+h4 { font-size: var(--font-size-xl); }
+h5 { font-size: var(--font-size-lg); }
+h6 { font-size: var(--font-size-base); }
+
+p {
+  margin: 0 0 1rem 0;
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   LINKS
+   ============================================================================= */
+
+a {
+  color: var(--text-accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--interactive-primary-hover);
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   BUTTONS (Base)
+   ============================================================================= */
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* =============================================================================
+   FORM ELEMENTS (Base)
+   ============================================================================= */
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =============================================================================
+   SCROLLBAR (Light theme)
+   ============================================================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-500);
+}
+
+/* =============================================================================
+   SELECTION
+   ============================================================================= */
+
+::selection {
+  background: var(--interactive-primary);
+  color: var(--text-inverse);
+}
+
+::-moz-selection {
+  background: var(--interactive-primary);
+  color: var(--text-inverse);
+}
+
+/* =============================================================================
+   FOCUS STATES
+   ============================================================================= */
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =============================================================================
+   PRINT STYLES
+   ============================================================================= */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+}
+
+/* =============================================================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+
+  h1 { font-size: var(--font-size-2xl); }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: var(--font-size-xl); }
+}
+
+/* =============================================================================
+   ACCESSIBILITY
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-01-19T17:18:41.429887",
+  "numpy_version": "1.26.3",
+  "best_model": "Gradient Boosting",
+  "best_metrics": {
+    "f1_score": 0.9900718931872646,
+    "accuracy": 0.9888903077512451,
+    "precision": 0.9872553482020938,
+    "recall": 0.9929045548180362,
+    "roc_auc": 0.9989929574457085,
+    "confusion_matrix": {
+      "TN": 3406,
+      "FP": 56,
+      "FN": 31,
+      "TP": 4338
+    }
+  },
+  "n_features": 1016,
+  "n_train_samples": 31323,
+  "n_test_samples": 7831,
+  "all_models_metrics": {
+    "Gradient Boosting": {
+      "f1_score": 0.9900718931872646,
+      "accuracy": 0.9888903077512451,
+      "precision": 0.9872553482020938,
+      "recall": 0.9929045548180362,
+      "roc_auc": 0.9989929574457085,
+      "confusion_matrix": {
+        "TN": 3406,
+        "FP": 56,
+        "FN": 31,
+        "TP": 4338
+      }
+    },
+    "Random Forest": {
+      "f1_score": 0.9768917082011781,
+      "accuracy": 0.9739496871408505,
+      "precision": 0.967032967032967,
+      "recall": 0.9869535362783246,
+      "roc_auc": 0.9977067171034196,
+      "confusion_matrix": {
+        "TN": 3315,
+        "FP": 147,
+        "FN": 57,
+        "TP": 4312
+      }
+    },
+    "Logistic Regression": {
+      "f1_score": 0.9770297930407096,
+      "accuracy": 0.9742050823649597,
+      "precision": 0.9708474576271187,
+      "recall": 0.9832913710231174,
+      "roc_auc": 0.9954918449519414,
+      "confusion_matrix": {
+        "TN": 3333,
+        "FP": 129,
+        "FN": 73,
+        "TP": 4296
+      }
+    }
+  }
+}

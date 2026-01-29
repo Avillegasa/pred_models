@@ -1,0 +1,236 @@
+================================================================================
+   EDA COMPLETO - Dataset Reducido (<100K)
+================================================================================
+
+📅 Fecha: 2026-01-13 13:51:17
+📁 Dataset: rba_reduced.csv
+
+✅ Dataset cargado: 85,141 registros
+
+================================================================================
+FASE 1: ANÁLISIS GENERAL DEL DATASET
+================================================================================
+
+📊 INFORMACIÓN DEL DATASET:
+   • Total registros: 85,141
+   • Total columnas: 16
+   • Tamaño en memoria: 51.99 MB
+
+📊 COLUMNAS:
+   • index                         : int64      | Nulls: 0 (0.00%)
+   • Login Timestamp               : datetime64[ns] | Nulls: 0 (0.00%)
+   • User ID                       : int64      | Nulls: 0 (0.00%)
+   • Round-Trip Time [ms]          : float64    | Nulls: 81,384 (95.59%)
+   • IP Address                    : object     | Nulls: 0 (0.00%)
+   • Country                       : object     | Nulls: 0 (0.00%)
+   • Region                        : object     | Nulls: 124 (0.15%)
+   • City                          : object     | Nulls: 22 (0.03%)
+   • ASN                           : int64      | Nulls: 0 (0.00%)
+   • User Agent String             : object     | Nulls: 0 (0.00%)
+   • Browser Name and Version      : object     | Nulls: 0 (0.00%)
+   • OS Name and Version           : object     | Nulls: 0 (0.00%)
+   • Device Type                   : object     | Nulls: 6 (0.01%)
+   • Login Successful              : bool       | Nulls: 0 (0.00%)
+   • Is Attack IP                  : bool       | Nulls: 0 (0.00%)
+   • Is Account Takeover           : bool       | Nulls: 0 (0.00%)
+
+================================================================================
+FASE 2: ANÁLISIS DE TARGET VARIABLE
+================================================================================
+
+📊 DISTRIBUCIÓN DE Is Account Takeover:
+   • Account Takeover: 141 (0.1656%)
+   • Normal: 85,000 (99.8344%)
+   • Ratio: 602.8:1 (Normal:ATO)
+
+================================================================================
+FASE 3: ANÁLISIS DE LOGIN SUCCESS/FAILURE
+================================================================================
+
+📊 DISTRIBUCIÓN DE Login Successful:
+   • Logins EXITOSOS: 36,297 (42.63%)
+   • Logins FALLIDOS: 48,844 (57.37%)
+
+📊 LOGIN SUCCESS EN ATOs:
+   • Exitosos: 140 (99.3%)
+   • Fallidos: 1 (0.7%)
+
+📊 LOGIN SUCCESS EN NORMALES:
+   • Exitosos: 36,157 (42.54%)
+   • Fallidos: 48,843 (57.46%)
+
+================================================================================
+FASE 4: ANÁLISIS DE FEATURES CATEGÓRICOS
+================================================================================
+
+📊 BROWSERS (Top 10):
+   Chrome Mobile 81.0.4044: 4,361 (5.12%)
+   Chrome 84.0.4147.338.339: 3,085 (3.62%)
+   Opera Mobile 52.1.2254: 3,043 (3.57%)
+   ZipppBot 0.11: 2,785 (3.27%)
+   Android 2.3.3.2660: 2,601 (3.05%)
+   Chrome Mobile 81.0.4044.1925: 2,442 (2.87%)
+   Android 2.3.4: 2,270 (2.67%)
+   Chrome Mobile 81.0.4044.1926: 2,148 (2.52%)
+   Chrome Mobile 81.0.4044.1927: 1,946 (2.29%)
+   Chrome 73.0.3654: 1,917 (2.25%)
+
+📊 SISTEMAS OPERATIVOS (Top 10):
+   iOS 11.2.6: 12,630 (14.83%)
+   Mac OS X 10.14.6: 12,190 (14.32%)
+   iOS 13.4: 9,525 (11.19%)
+   Other : 5,357 (6.29%)
+   Android 4.1: 5,048 (5.93%)
+   Mac OS X 11.6.3: 4,176 (4.90%)
+   Android 2.2: 3,299 (3.87%)
+   Android 13.0: 3,116 (3.66%)
+   Android 6.0.99: 2,546 (2.99%)
+   iOS 14.2.1: 2,346 (2.76%)
+
+📊 DEVICE TYPE:
+   mobile: 54,905 (64.49%)
+   desktop: 22,314 (26.21%)
+   bot: 3,807 (4.47%)
+   tablet: 2,518 (2.96%)
+   unknown: 1,591 (1.87%)
+
+================================================================================
+FASE 5: ANÁLISIS DE FEATURES NUMÉRICOS
+================================================================================
+
+📊 ROUND-TRIP TIME [ms]:
+   • Media: 651.4ms
+   • Mediana: 539.0ms
+   • Std Dev: 754.9ms
+   • Min: 10.0ms
+   • Max: 18264.0ms
+
+📊 ASN (Autonomous System Number):
+   • ASNs únicos: 1,762
+   • Top 10 ASNs:
+      ASN 29695: 23,764 (27.91%)
+      ASN 393398: 18,216 (21.40%)
+      ASN 41164: 4,032 (4.74%)
+      ASN 262582: 3,825 (4.49%)
+      ASN 15599: 2,787 (3.27%)
+      ASN 29492: 2,585 (3.04%)
+      ASN 15659: 2,396 (2.81%)
+      ASN 205727: 1,182 (1.39%)
+      ASN 25400: 1,054 (1.24%)
+      ASN 54903: 988 (1.16%)
+
+================================================================================
+FASE 6: ANÁLISIS TEMPORAL
+================================================================================
+
+📊 PERIODO DEL DATASET:
+   • Inicio: 2020-02-03 12:45:06.634000
+   • Fin: 2020-12-13 08:37:07.573000
+   • Duración: 313 días
+
+📊 DISTRIBUCIÓN POR HORA DEL DÍA (Top 10):
+   Hora 00:00: 1,149 (1.35%)
+   Hora 01:00: 1,503 (1.77%)
+   Hora 02:00: 1,704 (2.00%)
+   Hora 03:00: 1,832 (2.15%)
+   Hora 04:00: 2,256 (2.65%)
+   Hora 05:00: 2,814 (3.31%)
+   Hora 06:00: 3,601 (4.23%)
+   Hora 07:00: 4,332 (5.09%)
+   Hora 08:00: 4,572 (5.37%)
+   Hora 09:00: 4,749 (5.58%)
+
+📊 DISTRIBUCIÓN POR DÍA DE LA SEMANA:
+   Monday   : 12,616 (14.82%)
+   Tuesday  : 13,147 (15.44%)
+   Wednesday: 12,673 (14.88%)
+   Thursday : 12,855 (15.10%)
+   Friday   : 12,203 (14.33%)
+   Saturday : 10,543 (12.38%)
+   Sunday   : 11,104 (13.04%)
+
+================================================================================
+FASE 7: ANÁLISIS DE ATTACK IPs
+================================================================================
+
+📊 IPs DE ATAQUE:
+   • IPs marcadas como ataque: 8,020 (9.42%)
+   • IPs normales: 77,121 (90.58%)
+
+📊 ATTACK IP EN ATOs:
+   • ATOs con Attack IP: 77 (54.6%)
+
+================================================================================
+FASE 8: ANÁLISIS DE USUARIOS E IPs
+================================================================================
+
+📊 USUARIOS E IPs:
+   • Usuarios únicos: 47,858
+   • IPs únicas: 55,362
+   • Ratio IP/Usuario: 1.16
+
+📊 USUARIOS CON MÚLTIPLES IPs:
+   • Usuarios con 1 IP: 47,114
+   • Usuarios con 2+ IPs: 744
+   • Usuarios con 5+ IPs: 5
+   • Usuarios con 10+ IPs: 1
+
+📊 IPs CON MÚLTIPLES USUARIOS:
+   • IPs con 1 usuario: 50,211
+   • IPs con 2+ usuarios: 5,151
+   • IPs con 5+ usuarios: 1,351
+   • IPs con 10+ usuarios: 67
+
+================================================================================
+FASE 9: CONCLUSIONES DEL EDA
+================================================================================
+
+🎯 HALLAZGOS PRINCIPALES:
+
+1. BALANCE DE CLASES:
+   • Dataset EXTREMADAMENTE DESBALANCEADO
+   • Ratio 1:603 (Normal:ATO)
+   • Requiere class_weight='balanced' o SMOTE
+
+2. PATRÓN DE ATOs:
+   • 99.3% de ATOs son logins EXITOSOS
+   • Los atacantes YA TIENEN credenciales válidas
+   • NO es detección de fuerza bruta
+   • Detección basada en: IP nueva, país diferente, dispositivo diferente
+
+3. CASOS NORMALES:
+   • 57.46% de logins normales FALLAN
+   • Esto es comportamiento humano esperado (typos, olvidos)
+   • NO son ataques, son usuarios legítimos
+
+4. FEATURES ÚTILES:
+   • Country (cambio de país en ATOs)
+   • IP Address (IPs nuevas)
+   • Browser/OS/Device (cambios de dispositivo)
+   • Is Attack IP (correlación con ATOs)
+   • Round-Trip Time (latencia anómala)
+   • Login Timestamp (patrones temporales)
+
+5. MÉTRICAS RECOMENDADAS:
+   • Recall (PRIORIDAD - detectar todos los ATOs)
+   • F1-Score (balance Precision/Recall)
+   • AUC-PR (mejor que ROC-AUC para desbalance)
+   • NO usar Accuracy (inútil con desbalance extremo)
+
+================================================================================
+✅ EDA COMPLETADO
+================================================================================
+
+📋 RESUMEN:
+   • Dataset: rba_reduced.csv
+   • Registros: 85,141
+   • ATOs: 141
+   • Features: 19
+
+🎯 PRÓXIMOS PASOS:
+   1. Feature Engineering (35 features)
+   2. Temporal Split (no random)
+   3. Entrenar modelos con class_weight='balanced'
+   4. Threshold tuning para maximizar Recall
+
+================================================================================

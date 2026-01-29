@@ -1,0 +1,449 @@
+/**
+ * Dashboard Specific Styles
+ * Uses semantic CSS custom properties from index.css
+ */
+
+/* =============================================================================
+   DASHBOARD CONTAINER
+   ============================================================================= */
+
+.dashboard-container {
+  min-height: calc(100vh - 64px);
+  background: var(--bg-primary);
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* =============================================================================
+   HEADER
+   ============================================================================= */
+
+.dashboard-header {
+  background: linear-gradient(135deg, var(--surface-base) 0%, var(--surface-raised) 100%);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--interactive-primary);
+}
+
+.dashboard-header-title {
+  color: var(--text-primary);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-header-icon {
+  font-size: 2rem;
+  color: var(--text-accent);
+}
+
+.dashboard-header-subtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* =============================================================================
+   MODEL SELECTOR
+   ============================================================================= */
+
+.model-selector {
+  background: var(--surface-base);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.model-selector-title {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.model-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.model-button {
+  background: var(--surface-raised);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 70px;
+}
+
+.model-button:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-accent);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.model-button.active {
+  background: var(--interactive-primary);
+  border-color: var(--interactive-primary);
+  color: var(--interactive-primary-text);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.model-button-icon {
+  font-size: 1.5rem;
+}
+
+.model-button-label {
+  font-size: var(--font-size-base);
+}
+
+.model-button-badge {
+  background: var(--status-danger);
+  color: var(--text-primary);
+  font-size: 0.625rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  margin-left: 0.5rem;
+}
+
+/* =============================================================================
+   FORMS & RESULTS LAYOUT
+   ============================================================================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    gap: 2rem;
+  }
+}
+
+.form-section,
+.results-section {
+  min-height: 350px;
+  height: fit-content;
+}
+
+/* =============================================================================
+   FORM CARD
+   ============================================================================= */
+
+.form-card {
+  background: var(--surface-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  height: fit-content;
+}
+
+.form-card-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: var(--font-size-sm);
+}
+
+.form-label-required::after {
+  content: ' *';
+  color: var(--text-danger);
+}
+
+.form-control,
+.form-select {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 1rem;
+  font-size: var(--font-size-sm);
+  width: 100%;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--surface-raised);
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 3px var(--bg-accent);
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-submit-btn {
+  width: 100%;
+  background: var(--interactive-primary);
+  border: none;
+  color: var(--interactive-primary-text);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-top: 1rem;
+}
+
+.form-submit-btn:hover {
+  background: var(--interactive-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.form-submit-btn:disabled {
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =============================================================================
+   RESULTS CARD
+   ============================================================================= */
+
+.results-card {
+  background: var(--surface-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  min-height: 300px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-card-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.results-card-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.results-card-empty-text {
+  font-size: var(--font-size-base);
+  margin-bottom: 0.5rem;
+}
+
+/* =============================================================================
+   LOADING SPINNER
+   ============================================================================= */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid var(--surface-raised);
+  border-top-color: var(--interactive-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  margin-top: 1rem;
+  font-size: var(--font-size-sm);
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-card,
+  .results-card {
+    padding: 1.25rem;
+  }
+
+  .model-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 0.75rem;
+  }
+
+  .dashboard-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-header-title {
+    font-size: var(--font-size-lg);
+    gap: 0.5rem;
+  }
+
+  .dashboard-header-icon {
+    font-size: 1.5rem;
+  }
+
+  .model-selector {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .model-selector-title {
+    font-size: var(--font-size-xs);
+    margin-bottom: 0.75rem;
+  }
+
+  .model-buttons {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .model-button {
+    padding: 0.75rem 0.5rem;
+    min-height: 60px;
+    font-size: var(--font-size-sm);
+  }
+
+  .model-button-icon {
+    font-size: 1.25rem;
+  }
+
+  .model-button-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .form-card,
+  .results-card {
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .form-section,
+  .results-section {
+    min-height: auto;
+  }
+
+  .dashboard-grid {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .form-card-title {
+    font-size: var(--font-size-lg);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  textarea.form-control {
+    min-height: 100px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 0.5rem;
+  }
+
+  .model-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .model-button {
+    min-height: 50px;
+  }
+}

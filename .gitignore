@@ -1,0 +1,266 @@
+# ============================================================================
+# .gitignore - Sistema de Prediccion de Incidentes de Ciberseguridad
+# ============================================================================
+
+# ============================================================================
+# ARCHIVOS SENSIBLES (NUNCA subir)
+# ============================================================================
+
+# Variables de entorno (contienen credenciales, API keys, secrets)
+.env
+.env.local
+.env.development
+.env.production
+*.env
+
+# Bases de datos locales
+*.db
+*.sqlite
+*.sqlite3
+auth_gateway.db
+
+# Credenciales y secretos
+credentials.json
+secrets.json
+*.pem
+*.key
+*.crt
+
+# ============================================================================
+# DATASETS ORIGINALES (muy grandes, descargar de fuentes publicas)
+# ============================================================================
+
+# Datasets originales (8.5GB+ en total)
+# Fuentes:
+#   - CEAS_08: https://www.kaggle.com/datasets/naserabdullahalam/phishing-email-dataset
+#   - RBA Dataset: https://zenodo.org/records/6909498
+#   - CSE-CIC-IDS2018: https://www.unb.ca/cic/datasets/ids-2018.html
+
+*/dataset/*.csv
+*/dataset/*.xlsx
+*/dataset/*.json
+
+# ============================================================================
+# DATOS PROCESADOS (se regeneran con scripts)
+# ============================================================================
+
+# Los datos procesados se pueden regenerar ejecutando los notebooks de analisis
+*/processed_data/*.csv
+*/processed_data/*.parquet
+
+# Excepto archivos pequeños de ejemplo (descomentar si quieres incluirlos)
+# !*/processed_data/*_sample.csv
+
+# ============================================================================
+# MODELOS DE ML (regenerables con entrenamiento)
+# ============================================================================
+
+# Todos los modelos entrenados
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# MLflow artifacts
+mlruns/
+mlartifacts/
+
+# Excepciones: Modelos best_model necesarios para las APIs
+# (descomentar estas lineas si quieres incluir los modelos en produccion)
+!Phishing/modeling/outputs/models/best_model.pkl
+!Phishing/modeling/outputs/features/tfidf_vectorizer.pkl
+!Suspicious-Login-Activity/modeling/outputs/models/best_model.pkl
+!Suspicious-Login-Activity/modeling/outputs/features/label_encoders.pkl
+!fuerza-bruta/modeling/outputs/models/random_forest_*.pkl
+
+# ============================================================================
+# ARCHIVOS SUBIDOS POR USUARIOS
+# ============================================================================
+
+# Carpeta de uploads del auth-gateway
+auth-gateway/uploads/
+uploads/
+
+# ============================================================================
+# PYTHON
+# ============================================================================
+
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Instalacion
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+sdist/
+develop-eggs/
+.installed.cfg
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# MyPy
+.mypy_cache/
+
+# ============================================================================
+# JAVASCRIPT / NODE (Frontend React)
+# ============================================================================
+
+# Dependencias (se reinstalan con npm install)
+node_modules/
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================================================
+# JUPYTER NOTEBOOKS
+# ============================================================================
+
+# Checkpoints (se regeneran automaticamente)
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Output cells grandes (opcional, descomentar si quieres limpiar outputs)
+# *.ipynb  # Cuidado: esto excluiria TODOS los notebooks
+
+# ============================================================================
+# IDEs y EDITORES
+# ============================================================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# JetBrains (PyCharm, IntelliJ, WebStorm)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================================================
+# SISTEMA OPERATIVO
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ============================================================================
+# LOGS Y TEMPORALES
+# ============================================================================
+
+# Logs
+*.log
+logs/
+log/
+
+# Temporales
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Cache
+.cache/
+*.cache
+
+# ============================================================================
+# REFERENCIAS EXTERNAS (proyectos de terceros incluidos como referencia)
+# ============================================================================
+
+external_ref/
+
+# ============================================================================
+# ARCHIVOS ESPECIFICOS DEL PROYECTO A IGNORAR
+# ============================================================================
+
+# Reportes generados (PDFs, HTMLs de analisis)
+*/reports/*.pdf
+*/reports/*.html
+
+# Graficos/imagenes generadas (se regeneran con notebooks)
+*/figures/*.png
+*/figures/*.jpg
+*/figures/*.svg
+
+# Archivos de resultados de experimentos
+*/outputs/results/*.csv
+*/outputs/results/*.json
+
+# ============================================================================
+# NOTAS SOBRE COMO OBTENER ARCHIVOS EXCLUIDOS
+# ============================================================================
+#
+# 1. DATASETS ORIGINALES:
+#    - Phishing (CEAS_08): Descargar de Kaggle
+#    - ATO (RBA): Descargar de Zenodo (8.5GB)
+#    - Brute Force (CSE-CIC-IDS2018): Descargar de UNB
+#
+# 2. MODELOS ENTRENADOS:
+#    - Ejecutar notebooks en */modeling/notebooks/
+#    - O ejecutar scripts: python */modeling/train.py
+#
+# 3. DATOS PROCESADOS:
+#    - Ejecutar notebooks de analisis en */analysis/
+#
+# 4. DEPENDENCIAS:
+#    - Python: pip install -r requirements.txt
+#    - Node: cd frontend && npm install
+#
+# ============================================================================
