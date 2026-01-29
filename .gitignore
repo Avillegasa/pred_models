@@ -67,13 +67,12 @@ secrets.json
 mlruns/
 mlartifacts/
 
-# Excepciones: Modelos best_model necesarios para las APIs
-# (descomentar estas lineas si quieres incluir los modelos en produccion)
-# !Phishing/modeling/outputs/models/best_model.pkl
-# !Phishing/modeling/outputs/features/tfidf_vectorizer.pkl
-# !Suspicious-Login-Activity/modeling/outputs/models/best_model.pkl
-# !Suspicious-Login-Activity/modeling/outputs/features/label_encoders.pkl
-# !fuerza-bruta/modeling/outputs/models/random_forest_*.pkl
+# Excepciones: Modelos best_model necesarios para las APIs (via Git LFS)
+!Phishing/modeling/outputs/models/best_model.pkl
+!Phishing/modeling/outputs/features/tfidf_vectorizer.pkl
+!Suspicious-Login-Activity/modeling/outputs/models/best_model.pkl
+!Suspicious-Login-Activity/modeling/outputs/features/label_encoders.pkl
+!fuerza-bruta/modeling/outputs/models/random_forest_*.pkl
 
 # ============================================================================
 # ARCHIVOS SUBIDOS POR USUARIOS
