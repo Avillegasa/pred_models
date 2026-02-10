@@ -1,6 +1,6 @@
 /**
  * Sidebar Component
- * Navigation sidebar - Swissborg dark theme
+ * Navigation sidebar - BCP theme
  */
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -9,7 +9,6 @@ import {
   FaFileUpload,
   FaChartBar,
   FaUsers,
-  FaShieldAlt,
   FaBrain,
   FaBell
 } from 'react-icons/fa';
@@ -19,7 +18,7 @@ import { useAlerts } from '../../context/AlertContext';
 import RoleGuard from '../auth/RoleGuard';
 
 function Sidebar() {
-  const { user } = useAuth();
+  const { user, hasPermission } = useAuth();
   const { unreadCount } = useAlerts();
 
   return (
@@ -27,10 +26,10 @@ function Sidebar() {
       {/* Logo */}
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <FaShieldAlt size={20} />
+          <img src="/logo-bcp.png" alt="BCP" style={{ width: '36px', height: 'auto' }} />
         </div>
         <div className="sidebar-brand">
-          <span className="brand-name">SOC Portal</span>
+          <span className="brand-name">BCP SOC</span>
           <span className="brand-role">
             {user?.role === 'admin' ? 'Administrador' : 'Analista'}
           </span>
@@ -39,17 +38,19 @@ function Sidebar() {
 
       {/* Navigation */}
       <nav className="sidebar-nav">
-        <NavLink to="/dashboard" end className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <FaHome className="nav-icon" />
-          <span>Dashboard</span>
-        </NavLink>
+        {hasPermission('dashboard') && (
+          <NavLink to="/dashboard" end className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <FaHome className="nav-icon" />
+            <span>Dashboard</span>
+          </NavLink>
+        )}
 
-        <RoleGuard roles="admin">
+        {hasPermission('predictions') && (
           <NavLink to="/dashboard/predict" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <FaBrain className="nav-icon" />
             <span>Prediccion Manual</span>
           </NavLink>
-        </RoleGuard>
+        )}
 
         <RoleGuard roles="admin">
           <NavLink to="/files" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
@@ -58,20 +59,24 @@ function Sidebar() {
           </NavLink>
         </RoleGuard>
 
-        <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <FaChartBar className="nav-icon" />
-          <span>Reportes</span>
-        </NavLink>
+        {hasPermission('reports') && (
+          <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <FaChartBar className="nav-icon" />
+            <span>Reportes Mensuales</span>
+          </NavLink>
+        )}
 
-        <NavLink to="/alerts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <FaBell className="nav-icon" />
-          <span>Alertas</span>
-          {unreadCount > 0 && (
-            <Badge bg="danger" className="ms-auto" pill>
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Badge>
-          )}
-        </NavLink>
+        {hasPermission('alerts') && (
+          <NavLink to="/alerts" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <FaBell className="nav-icon" />
+            <span>Alertas</span>
+            {unreadCount > 0 && (
+              <Badge bg="danger" className="ms-auto" pill>
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Badge>
+            )}
+          </NavLink>
+        )}
 
         <RoleGuard roles="admin">
           <NavLink to="/users" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
@@ -120,9 +125,6 @@ function Sidebar() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--interactive-primary);
-          color: var(--text-inverse);
-          border-radius: var(--radius-md);
         }
 
         .sidebar-brand {

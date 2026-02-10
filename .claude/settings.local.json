@@ -12,7 +12,12 @@
       "Bash(unzip:*)",
       "Bash(ls:*)",
       "Bash(python seed_data.py:*)",
-      "Bash(python sync_alerts.py:*)"
+      "Bash(python sync_alerts.py:*)",
+      "Bash(docker compose up:*)",
+      "Bash(docker compose logs:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose build:*)"
     ]
   }
 }

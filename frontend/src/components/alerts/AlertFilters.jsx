@@ -60,8 +60,8 @@ function AlertFilters({ filters, onChange, selectedCount, onBulkAcknowledge }) {
           >
             <option value="">Todos</option>
             <option value="phishing">Phishing</option>
-            <option value="ato">Account Takeover</option>
-            <option value="brute_force">Brute Force</option>
+            <option value="ato">Toma de Cuenta</option>
+            <option value="brute_force">Fuerza Bruta</option>
           </Form.Select>
         </Form.Group>
       </Col>

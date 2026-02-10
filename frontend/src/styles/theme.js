@@ -1,9 +1,10 @@
 /**
  * Cybersecurity Dashboard - Design Tokens
- * Identity: BCP Corporate Theme (Light)
+ * Identity: BCP Bolivia Corporate Theme (Light)
  *
- * Primary: #00498C (BCP Blue)
- * Accent: #FF7800 (BCP Orange)
+ * Primary: #004B8E (BCP Blue)
+ * Accent: #F26E29 (BCP Orange)
+ * Navy: #32335C (Dark text)
  * Backgrounds: White and light grays
  * Text: Dark grays for readability
  */
@@ -12,20 +13,20 @@
 // PRIMITIVE TOKENS (Raw palette - never use directly in components)
 // =============================================================================
 const primitives = {
-  // Brand - BCP Corporate
+  // Brand - BCP Bolivia Corporate
   blue: {
-    700: '#003366',  // Darker blue
-    600: '#00498C',  // Primary BCP Blue
+    700: '#32335C',  // Navy (BCP Bolivia)
+    600: '#004B8E',  // Primary BCP Blue
     500: '#005BA8',  // Hover state
     400: '#0073C4',  // Light blue
-    100: 'rgba(0, 73, 140, 0.08)',  // Subtle background
+    100: 'rgba(0, 75, 142, 0.08)',  // Subtle background
   },
 
   orange: {
     600: '#E56A00',  // Pressed state
-    500: '#FF7800',  // Accent BCP Orange
-    400: '#FF9333',  // Hover state
-    100: 'rgba(255, 120, 0, 0.08)',  // Subtle background
+    500: '#F26E29',  // Accent BCP Orange (BCP Bolivia)
+    400: '#ef7a1d',  // Hover state (BCP Bolivia)
+    100: 'rgba(242, 110, 41, 0.08)',  // Subtle background
   },
 
   // Neutrals - Light Theme
@@ -35,9 +36,9 @@ const primitives = {
     700: '#4D4D4D',  // Secondary text
     600: '#666666',  // Muted text
     500: '#808080',  // Placeholder
-    400: '#999999',  // Disabled
+    400: '#ababab',  // Disabled (BCP Bolivia)
     300: '#B3B3B3',  // Borders
-    200: '#E0E0E0',  // Light borders
+    200: '#DFE1E7',  // Light borders (BCP Bolivia)
     100: '#F0F0F0',  // Subtle backgrounds
     50: '#F8F9FA',   // Card backgrounds
   },
@@ -239,8 +240,8 @@ export const shadows = {
   lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
   xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
   glow: {
-    primary: '0 0 20px rgba(0, 73, 140, 0.2)',
-    accent: '0 0 20px rgba(255, 120, 0, 0.2)',
+    primary: '0 0 20px rgba(0, 75, 142, 0.2)',
+    accent: '0 0 20px rgba(242, 110, 41, 0.2)',
     danger: '0 0 20px rgba(229, 62, 62, 0.2)',
   },
 };

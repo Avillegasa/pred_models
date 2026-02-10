@@ -30,12 +30,12 @@ const PredictionCard = ({ prediction }) => {
 
   const getDescription = () => {
     if (isLegitimate) {
-      return 'This appears to be legitimate activity. No immediate threat detected.';
+      return 'Esto parece ser actividad legitima. No se detecto amenaza inmediata.';
     }
     if (isThreat) {
-      return 'This activity shows characteristics of a security threat. Review carefully.';
+      return 'Esta actividad muestra caracteristicas de una amenaza de seguridad. Revise cuidadosamente.';
     }
-    return 'Analysis complete.';
+    return 'Analisis completado.';
   };
 
   return (

@@ -1,32 +1,32 @@
 /**
- * Custom Bootstrap Theme - BCP Corporate Identity
+ * Custom Bootstrap Theme - BCP Bolivia Corporate Identity
  * Light theme with blue primary and orange accent
  */
 
 // =============================================================================
-// PRIMITIVE PALETTE - BCP Corporate
+// PRIMITIVE PALETTE - BCP Bolivia Corporate
 // =============================================================================
 
-// BCP Blue (Primary)
-$blue-700: #003366;
-$blue-600: #00498C;
+// BCP Blue (Primary) - BCP Bolivia
+$blue-700: #32335C;   // Navy (BCP Bolivia)
+$blue-600: #004B8E;   // Primary BCP Blue
 $blue-500: #005BA8;
 $blue-400: #0073C4;
 
-// BCP Orange (Accent)
+// BCP Orange (Accent) - BCP Bolivia
 $orange-600: #E56A00;
-$orange-500: #FF7800;
-$orange-400: #FF9333;
+$orange-500: #F26E29;  // Primary BCP Orange (BCP Bolivia)
+$orange-400: #ef7a1d;  // Hover (BCP Bolivia)
 
-// Neutrals (Light theme)
+// Neutrals (Light theme) - BCP Bolivia adjustments
 $gray-900: #1A1A1A;
 $gray-800: #333333;
 $gray-700: #4D4D4D;
 $gray-600: #666666;
 $gray-500: #808080;
-$gray-400: #999999;
+$gray-400: #ababab;    // BCP Bolivia
 $gray-300: #B3B3B3;
-$gray-200: #E0E0E0;
+$gray-200: #DFE1E7;    // BCP Bolivia
 $gray-100: #F0F0F0;
 $gray-50: #F8F9FA;
 

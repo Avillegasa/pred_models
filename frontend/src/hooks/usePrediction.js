@@ -6,6 +6,7 @@
 import { useCallback } from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import { predictWithModel } from '../services/modelService';
+import predictionService from '../services/predictionService';
 
 /**
  * Custom hook for handling predictions
@@ -26,6 +27,18 @@ export const usePrediction = () => {
   } = useDashboard();
 
   /**
+   * Map frontend model names to backend model types
+   */
+  const getModelType = (model) => {
+    const modelMap = {
+      'phishing': 'phishing',
+      'ataques_sospechosos': 'ato',
+      'fuerza_bruta': 'brute_force'
+    };
+    return modelMap[model] || model;
+  };
+
+  /**
    * Make a prediction with the selected model
    * @param {Object} data - Input data for prediction
    * @returns {Promise<Object>} Prediction result
@@ -41,6 +54,22 @@ export const usePrediction = () => {
       // Handle result
       if (result.success) {
         setPredictionSuccess(result.data);
+
+        // Save prediction to backend for statistics
+        try {
+          await predictionService.savePrediction({
+            model_type: getModelType(selectedModel),
+            prediction: result.data.prediction,
+            prediction_label: result.data.prediction_label,
+            confidence: result.data.confidence,
+            input_data: data,
+            explanation: result.data.explanation
+          });
+        } catch (saveError) {
+          // Don't fail the prediction if saving fails, just log it
+          console.warn('Failed to save prediction for statistics:', saveError);
+        }
+
         return { success: true, data: result.data };
       } else {
         setPredictionError(result.error);

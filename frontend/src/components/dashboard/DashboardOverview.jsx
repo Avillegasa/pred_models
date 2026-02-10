@@ -18,6 +18,7 @@ import {
   FaNetworkWired
 } from 'react-icons/fa';
 import reportService from '../../services/reportService';
+import predictionService from '../../services/predictionService';
 import { useAuth } from '../../context/AuthContext';
 
 const DashboardOverview = () => {
@@ -45,17 +46,24 @@ const DashboardOverview = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const data = await reportService.listReports();
-      setReports(data);
-      calculateStats(data);
+
+      // Load both reports and manual prediction stats in parallel
+      const [reportsData, manualStats] = await Promise.all([
+        reportService.listReports(),
+        predictionService.getStats().catch(() => null)
+      ]);
+
+      setReports(reportsData);
+      calculateStats(reportsData, manualStats);
     } catch (err) {
-      console.error('Error loading reports:', err);
+      console.error('Error loading data:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateStats = (reportsList) => {
+  const calculateStats = (reportsList, manualStats) => {
+    // Stats from reports (batch predictions)
     let totalPredictions = 0;
     let threatsDetected = 0;
     let benignCount = 0;
@@ -84,6 +92,28 @@ const DashboardOverview = () => {
       }
     });
 
+    // Add manual prediction stats
+    if (manualStats) {
+      totalPredictions += manualStats.total_predictions || 0;
+      threatsDetected += manualStats.threats_detected || 0;
+      benignCount += manualStats.benign_count || 0;
+
+      if (manualStats.avg_confidence > 0) {
+        totalConfidence += manualStats.avg_confidence;
+        confidenceCount++;
+      }
+
+      // Add manual stats by model
+      if (manualStats.by_model) {
+        Object.keys(manualStats.by_model).forEach(model => {
+          if (byModel[model]) {
+            byModel[model].total += manualStats.by_model[model].total || 0;
+            byModel[model].threats += manualStats.by_model[model].threats || 0;
+          }
+        });
+      }
+    }
+
     setStats({
       totalPredictions,
       threatsDetected,
@@ -104,9 +134,9 @@ const DashboardOverview = () => {
 
   const getModelLabel = (modelType) => {
     switch (modelType?.toLowerCase()) {
-      case 'phishing': return 'Phishing Detection';
-      case 'ato': return 'Account Takeover';
-      case 'brute_force': return 'Brute Force';
+      case 'phishing': return 'Deteccion de Phishing';
+      case 'ato': return 'Toma de Cuenta';
+      case 'brute_force': return 'Fuerza Bruta';
       default: return modelType;
     }
   };

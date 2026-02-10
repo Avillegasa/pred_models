@@ -11,18 +11,18 @@
   /* -------------------------------------------------------------------------
      PRIMITIVE COLORS (Internal use only - prefer semantic tokens)
      ------------------------------------------------------------------------- */
-  /* BCP Brand - Blue */
-  --color-blue-700: #003366;
-  --color-blue-600: #00498C;
+  /* BCP Brand - Blue (BCP Bolivia) */
+  --color-blue-700: #32335C;
+  --color-blue-600: #004B8E;
   --color-blue-500: #005BA8;
   --color-blue-400: #0073C4;
-  --color-blue-100: rgba(0, 73, 140, 0.08);
+  --color-blue-100: rgba(0, 75, 142, 0.08);
 
-  /* BCP Accent - Orange */
+  /* BCP Accent - Orange (BCP Bolivia) */
   --color-orange-600: #E56A00;
-  --color-orange-500: #FF7800;
-  --color-orange-400: #FF9333;
-  --color-orange-100: rgba(255, 120, 0, 0.08);
+  --color-orange-500: #F26E29;
+  --color-orange-400: #ef7a1d;
+  --color-orange-100: rgba(242, 110, 41, 0.08);
 
   /* Neutrals - Light Theme */
   --color-gray-900: #1A1A1A;
@@ -30,9 +30,9 @@
   --color-gray-700: #4D4D4D;
   --color-gray-600: #666666;
   --color-gray-500: #808080;
-  --color-gray-400: #999999;
+  --color-gray-400: #ababab;
   --color-gray-300: #B3B3B3;
-  --color-gray-200: #E0E0E0;
+  --color-gray-200: #DFE1E7;
   --color-gray-100: #F0F0F0;
   --color-gray-50: #F8F9FA;
 
@@ -156,8 +156,8 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  --shadow-glow-primary: 0 0 20px rgba(0, 73, 140, 0.2);
-  --shadow-glow-accent: 0 0 20px rgba(255, 120, 0, 0.2);
+  --shadow-glow-primary: 0 0 20px rgba(0, 75, 142, 0.2);
+  --shadow-glow-accent: 0 0 20px rgba(242, 110, 41, 0.2);
   --shadow-glow-danger: 0 0 20px rgba(229, 62, 62, 0.2);
 
   /* -------------------------------------------------------------------------

@@ -7,8 +7,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-function ProtectedRoute({ children, requiredRole = null }) {
-  const { isAuthenticated, hasRole, loading } = useAuth();
+function ProtectedRoute({ children, requiredRole = null, requiredPermission = null }) {
+  const { isAuthenticated, hasRole, hasPermission, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -27,6 +27,12 @@ function ProtectedRoute({ children, requiredRole = null }) {
   // Check for required role
   if (requiredRole && !hasRole(requiredRole)) {
     // User doesn't have required role, redirect to dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Check for required permission
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    // User doesn't have required permission, redirect to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 

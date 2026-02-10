@@ -11,7 +11,7 @@ import { formatApiError } from '../../services/api';
 const ErrorAlert = ({ error, onDismiss }) => {
   if (!error) return null;
 
-  const formattedError = typeof error === 'object' ? formatApiError(error) : { title: 'Error', message: error };
+  const formattedError = typeof error === 'object' ? formatApiError(error) : { title: 'Error', message: error || 'Ocurrio un error inesperado' };
 
   const getIcon = () => {
     switch (error.type) {
@@ -49,7 +49,7 @@ const ErrorAlert = ({ error, onDismiss }) => {
       <p className="error-alert-message">{formattedError.message}</p>
       {formattedError.status && (
         <small className="error-alert-details">
-          Status Code: {formattedError.status}
+          Codigo de estado: {formattedError.status}
         </small>
       )}
     </Alert>

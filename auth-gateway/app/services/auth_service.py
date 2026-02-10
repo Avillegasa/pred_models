@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from ..config import get_settings
 from ..database import get_db
-from ..models.user import User
+from ..models.user import User, DEFAULT_ADMIN_PERMISSIONS, DEFAULT_ANALYST_PERMISSIONS
 from ..schemas.auth import TokenData
 
 settings = get_settings()
@@ -100,6 +100,8 @@ async def get_current_admin(current_user: User = Depends(get_current_user)) -> U
 
 def create_default_users(db: Session):
     """Create default admin and analyst users if they don't exist"""
+    import json
+
     admin = db.query(User).filter(User.username == "admin").first()
     if not admin:
         admin = User(
@@ -108,9 +110,13 @@ def create_default_users(db: Session):
             password_hash=AuthService.get_password_hash("admin123"),
             role="admin",
             full_name="SOC Administrator",
-            is_active=True
+            is_active=True,
+            permissions=json.dumps(DEFAULT_ADMIN_PERMISSIONS)
         )
         db.add(admin)
+    elif admin.permissions is None:
+        # Update existing admin with permissions if missing
+        admin.permissions = json.dumps(DEFAULT_ADMIN_PERMISSIONS)
 
     analyst = db.query(User).filter(User.username == "analyst").first()
     if not analyst:
@@ -120,8 +126,12 @@ def create_default_users(db: Session):
             password_hash=AuthService.get_password_hash("analyst123"),
             role="analyst",
             full_name="SOC Analyst",
-            is_active=True
+            is_active=True,
+            permissions=json.dumps(DEFAULT_ANALYST_PERMISSIONS)
         )
         db.add(analyst)
+    elif analyst.permissions is None:
+        # Update existing analyst with permissions if missing
+        analyst.permissions = json.dumps(DEFAULT_ANALYST_PERMISSIONS)
 
     db.commit()

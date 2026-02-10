@@ -7,6 +7,8 @@ from datetime import datetime
 
 
 class AlertBase(BaseModel):
+    model_config = {"protected_namespaces": ()}
+
     title: str
     description: Optional[str] = None
     severity: str  # 'critical', 'high', 'medium'
@@ -14,7 +16,7 @@ class AlertBase(BaseModel):
 
 
 class AlertResponse(AlertBase):
-    model_config = {"from_attributes": True}
+    model_config = {"protected_namespaces": (), "from_attributes": True}
 
     id: int
     status: str

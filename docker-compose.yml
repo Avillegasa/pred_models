@@ -1,0 +1,158 @@
+# Docker Compose for Cybersecurity Incident Detection System
+# Production configuration
+# Usage: docker-compose up --build -d
+
+version: "3.8"
+
+services:
+  # ============================================================================
+  # ML APIs
+  # ============================================================================
+
+  phishing-api:
+    build:
+      context: ./Phishing/modeling
+      dockerfile: api/Dockerfile
+    container_name: phishing-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/outputs/models/best_model.pkl
+      - VECTORIZER_PATH=/app/outputs/features/tfidf_vectorizer.pkl
+    networks:
+      - cybersecurity-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  ato-api:
+    build:
+      context: ./Suspicious-Login-Activity/modeling
+      dockerfile: api/Dockerfile
+    container_name: ato-api
+    ports:
+      - "8001:8001"
+    environment:
+      - MODEL_PATH=/app/outputs/models/best_model.pkl
+      - ENCODERS_PATH=/app/outputs/features/label_encoders.pkl
+    networks:
+      - cybersecurity-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  brute-force-api:
+    build:
+      context: ./fuerza-bruta
+      dockerfile: api/Dockerfile
+    container_name: brute-force-api
+    ports:
+      - "8002:8002"
+    environment:
+      - MODEL_PATH=/app/outputs/models/random_forest.pkl
+    networks:
+      - cybersecurity-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ============================================================================
+  # Auth Gateway
+  # ============================================================================
+
+  auth-gateway:
+    build:
+      context: ./auth-gateway
+      dockerfile: Dockerfile
+    container_name: auth-gateway
+    ports:
+      - "8003:8003"
+    environment:
+      - PHISHING_API_URL=http://phishing-api:8000
+      - ATO_API_URL=http://ato-api:8001
+      - BRUTE_FORCE_API_URL=http://brute-force-api:8002
+      - DATABASE_URL=sqlite:///./data/auth_gateway.db
+      - UPLOAD_DIR=/app/uploads
+      - SECRET_KEY=your-super-secret-key-change-in-production
+    volumes:
+      - auth-gateway-data:/app/data
+      - auth-gateway-uploads:/app/uploads
+    networks:
+      - cybersecurity-network
+    depends_on:
+      phishing-api:
+        condition: service_healthy
+      ato-api:
+        condition: service_healthy
+      brute-force-api:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ============================================================================
+  # Frontend (Production - Nginx)
+  # ============================================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        - VITE_PHISHING_API_URL=http://localhost:8000
+        - VITE_ATO_API_URL=http://localhost:8001
+        - VITE_BRUTE_FORCE_API_URL=http://localhost:8002
+        - VITE_AUTH_API_URL=http://localhost:8003
+        - VITE_API_TIMEOUT=10000
+        - VITE_DEBUG_MODE=false
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - cybersecurity-network
+    depends_on:
+      auth-gateway:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# ============================================================================
+# Networks
+# ============================================================================
+
+networks:
+  cybersecurity-network:
+    driver: bridge
+    name: cybersecurity-network
+
+# ============================================================================
+# Volumes
+# ============================================================================
+
+volumes:
+  auth-gateway-data:
+    name: auth-gateway-data
+  auth-gateway-uploads:
+    name: auth-gateway-uploads

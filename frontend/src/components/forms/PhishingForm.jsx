@@ -24,36 +24,36 @@ const PhishingForm = () => {
 
   const validationRules = {
     sender: {
-      label: 'Sender Email',
+      label: 'Email del Remitente',
       required: true,
       validator: (value) => {
         if (!isValidEmail(value)) {
-          return 'Please enter a valid email address';
+          return 'Por favor ingrese una direccion de email valida';
         }
         return null;
       }
     },
     receiver: {
-      label: 'Receiver Email',
+      label: 'Email del Destinatario',
       required: false,
       validator: (value) => {
         if (value && !isValidEmail(value)) {
-          return 'Please enter a valid email address';
+          return 'Por favor ingrese una direccion de email valida';
         }
         return null;
       }
     },
     subject: {
-      label: 'Subject',
+      label: 'Asunto',
       required: true,
       min: 3,
-      minMessage: 'Subject must be at least 3 characters'
+      minMessage: 'El asunto debe tener al menos 3 caracteres'
     },
     body: {
-      label: 'Body',
+      label: 'Cuerpo',
       required: true,
       min: 10,
-      minMessage: 'Body must be at least 10 characters'
+      minMessage: 'El cuerpo debe tener al menos 10 caracteres'
     },
     urls: {
       label: 'URLs',
@@ -94,61 +94,61 @@ const PhishingForm = () => {
 
   return (
     <div className="form-card">
-      <h3 className="form-card-title">Phishing Email Detection</h3>
+      <h3 className="form-card-title">Deteccion de Email de Phishing</h3>
       <form onSubmit={handleSubmit}>
         <FormInput
-          label="Sender Email Address"
+          label="Direccion de Email del Remitente"
           name="sender"
           type="email"
           value={formData.sender}
           onChange={handleChange}
           onBlur={handleBlur}
-          placeholder="suspicious@example.com"
+          placeholder="sospechoso@ejemplo.com"
           required
           error={errors.sender}
           icon={<FiMail />}
         />
 
         <FormInput
-          label="Receiver Email Address"
+          label="Direccion de Email del Destinatario"
           name="receiver"
           type="email"
           value={formData.receiver}
           onChange={handleChange}
           onBlur={handleBlur}
-          placeholder="victim@company.com (optional)"
+          placeholder="victima@empresa.com (opcional)"
           error={errors.receiver}
           icon={<FiInbox />}
         />
 
         <FormInput
-          label="Email Subject"
+          label="Asunto del Email"
           name="subject"
           type="text"
           value={formData.subject}
           onChange={handleChange}
           onBlur={handleBlur}
-          placeholder="URGENT: Verify your account"
+          placeholder="URGENTE: Verifique su cuenta"
           required
           error={errors.subject}
           icon={<FiFileText />}
         />
 
         <FormInput
-          label="Email Body"
+          label="Cuerpo del Email"
           name="body"
           as="textarea"
           rows={6}
           value={formData.body}
           onChange={handleChange}
           onBlur={handleBlur}
-          placeholder="Enter the email content here..."
+          placeholder="Ingrese el contenido del email aqui..."
           required
           error={errors.body}
         />
 
         <FormInput
-          label="Contains URLs"
+          label="Contiene URLs"
           name="urls"
           type="select"
           value={formData.urls}
@@ -158,7 +158,7 @@ const PhishingForm = () => {
           error={errors.urls}
           options={[
             { value: '0', label: 'No' },
-            { value: '1', label: 'Yes' }
+            { value: '1', label: 'Si' }
           ]}
           icon={<FiLink />}
         />
@@ -170,7 +170,7 @@ const PhishingForm = () => {
             className="form-submit-btn flex-grow-1"
             disabled={isLoading}
           >
-            {isLoading ? 'Analyzing...' : 'Predict'}
+            {isLoading ? 'Analizando...' : 'Predecir'}
           </Button>
           <Button
             type="button"
@@ -178,7 +178,7 @@ const PhishingForm = () => {
             onClick={handleClear}
             disabled={isLoading}
           >
-            Clear
+            Limpiar
           </Button>
         </div>
       </form>

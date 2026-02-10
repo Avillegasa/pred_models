@@ -12,16 +12,16 @@ class LoginInput(BaseModel):
         "json_schema_extra": {
             "example": {
                 "user_id": "user123",
-                "ip_address": "192.168.1.100",
-                "country": "US",
-                "region": "California",
-                "city": "San Francisco",
+                "ip_address": "200.87.195.100",
+                "country": "BO",
+                "region": "La Paz",
+                "city": "La Paz",
                 "browser": "Chrome 120.0",
                 "os": "Windows 10",
                 "device": "Desktop",
                 "login_successful": 1,
                 "is_attack_ip": 0,
-                "asn": 15169,
+                "asn": 6568,
                 "rtt": 45.5,
                 "login_timestamp": "2026-01-15T10:30:00Z"
             }
@@ -76,33 +76,37 @@ class ATOExplanation(BaseModel):
                 "risk_indicators": [
                     {
                         "indicator": "Cambio de pais detectado",
-                        "evidence": ["Pais anterior: US", "Pais actual: RO"],
+                        "evidence": ["Pais anterior: BO", "Pais actual: RU"],
                         "severity": "high"
                     },
                     {
-                        "indicator": "Cambio de direccion IP",
-                        "evidence": ["IP anterior: 192.168.1.1", "IP actual: 89.46.23.10"],
-                        "severity": "medium"
+                        "indicator": "Login desde ubicación de alto riesgo",
+                        "evidence": [
+                            "País: Rusia (RU)",
+                            "Este país tiene historial significativo de ciberataques"
+                        ],
+                        "severity": "critical"
                     }
                 ],
                 "risk_factors": {
                     "country_changed": 0.35,
-                    "ip_changed": 0.15,
-                    "is_night": 0.10
+                    "geographic_risk": 0.8,
+                    "ip_changed": 0.15
                 },
                 "key_features": {
                     "country_changed": True,
                     "ip_changed": True,
-                    "is_night": True,
+                    "geographic_risk_level": "high",
+                    "is_normal_region": False,
                     "is_attack_ip": False
                 },
                 "geo_info": {
-                    "country": "RO",
-                    "region": "Bucharest",
-                    "city": "Bucharest",
+                    "country": "RU",
+                    "region": "Moscow",
+                    "city": "Moscow",
                     "asn": 9050
                 },
-                "summary": "Login de alto riesgo: 2 indicadores detectados (1 criticos).",
+                "summary": "Login de alto riesgo: 2 indicadores detectados (2 criticos).",
                 "total_indicators": 2
             }
         }
@@ -174,24 +178,24 @@ class BatchLoginInput(BaseModel):
                 "logins": [
                     {
                         "user_id": "user123",
-                        "ip_address": "192.168.1.100",
-                        "country": "US",
-                        "region": "California",
-                        "city": "San Francisco",
+                        "ip_address": "200.87.195.100",
+                        "country": "BO",
+                        "region": "La Paz",
+                        "city": "La Paz",
                         "browser": "Chrome 120.0",
                         "os": "Windows 10",
                         "device": "Desktop",
                         "login_successful": 1,
                         "is_attack_ip": 0,
-                        "asn": 15169,
+                        "asn": 6568,
                         "rtt": 45.5
                     },
                     {
                         "user_id": "user456",
                         "ip_address": "89.46.23.10",
-                        "country": "RO",
-                        "region": "Bucharest",
-                        "city": "Bucharest",
+                        "country": "RU",
+                        "region": "Moscow",
+                        "city": "Moscow",
                         "browser": "Firefox 115.0",
                         "os": "Linux",
                         "device": "Desktop",

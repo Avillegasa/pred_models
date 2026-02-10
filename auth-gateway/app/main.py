@@ -7,7 +7,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import init_db, SessionLocal
-from .routers import auth_router, users_router, files_router, reports_router, alerts_router
+from .routers import auth_router, users_router, files_router, alerts_router, predictions_router, profile_router
+from .routers.monthly_reports import router as monthly_reports_router
+from .routers.reports import router as reports_router
 from .services.auth_service import create_default_users
 
 
@@ -36,7 +38,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost",
+        "http://localhost:80",
         "http://localhost:5173",
+        "http://127.0.0.1",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
     ],
@@ -48,9 +53,12 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router)
 app.include_router(users_router)
+app.include_router(profile_router)
 app.include_router(files_router)
 app.include_router(reports_router)
+app.include_router(monthly_reports_router)
 app.include_router(alerts_router)
+app.include_router(predictions_router)
 
 
 @app.get("/health", tags=["Health"])
@@ -69,9 +77,11 @@ async def root():
         "health": "/health",
         "endpoints": {
             "auth": "/auth/login, /auth/me",
+            "profile": "/profile (authenticated)",
             "users": "/users (admin only)",
             "files": "/files (admin only)",
             "reports": "/reports",
+            "monthly-reports": "/monthly-reports",
             "alerts": "/alerts"
         }
     }

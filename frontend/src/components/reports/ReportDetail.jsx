@@ -12,11 +12,11 @@ function ReportDetail({ show, onHide, report, loading }) {
   const [showExplanationModal, setShowExplanationModal] = useState(false);
   const getModelBadge = (modelType) => {
     const badges = {
-      phishing: <Badge bg="info" className="fs-6">Phishing Detection</Badge>,
-      ato: <Badge bg="warning" text="dark" className="fs-6">Account Takeover</Badge>,
-      brute_force: <Badge bg="danger" className="fs-6">Brute Force</Badge>
+      phishing: <Badge bg="info" className="fs-6">Deteccion de Phishing</Badge>,
+      ato: <Badge bg="warning" text="dark" className="fs-6">Toma de Cuenta</Badge>,
+      brute_force: <Badge bg="danger" className="fs-6">Fuerza Bruta</Badge>
     };
-    return badges[modelType] || <Badge bg="secondary" className="fs-6">Unknown</Badge>;
+    return badges[modelType] || <Badge bg="secondary" className="fs-6">Desconocido</Badge>;
   };
 
   const getThreatPercentage = () => {

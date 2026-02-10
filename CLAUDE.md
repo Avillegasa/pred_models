@@ -1,19 +1,61 @@
 # CLAUDE.md
 
-**Sistema de Predicción de Incidentes de Ciberseguridad** - Proyecto de investigación académica con 3 modelos de ML en producción.
+**Sistema de Deteccion de Incidentes de Ciberseguridad** - Proyecto de investigacion academica con 3 modelos de ML en produccion.
+
+> **Tipo de Sistema**: Clasificacion Predictiva en Tiempo Real (detecta amenazas cuando ocurren, no predice eventos futuros)
 
 ---
 
-## Estado del Proyecto (2026-01-29)
+## Estado del Proyecto (2026-02-04)
 
-| Modelo | Dataset | Algoritmo | F1-Score | API | Puerto |
-|--------|---------|-----------|----------|-----|--------|
-| **Phishing Detection** | CEAS_08 (39K emails) | Gradient Boosting | 99.01% | ✅ | 8000 |
-| **Account Takeover** | RBA (85K logins) | Gradient Boosting | 75.86% | ✅ | 8001 |
-| **Brute Force** | CSE-CIC-IDS2018 (763K flows) | Random Forest | 99.97% | ✅ | 8002 |
-| **Auth Gateway** | - | JWT + SQLite | - | ✅ | 8003 |
+| Modelo | Dataset | Algoritmo | F1-Score | ROC-AUC | API | Puerto |
+|--------|---------|-----------|----------|---------|-----|--------|
+| **Phishing Detection** | CEAS_08 (39K emails) | Gradient Boosting | 99.09% | 99.90% | ✅ | 8000 |
+| **Account Takeover** | RBA (85K logins) | Gradient Boosting + SMOTE | 75.86% | 98.06% | ✅ | 8001 |
+| **Brute Force** | CSE-CIC-IDS2018 (763K flows) | Random Forest | 99.97% | 100% | ✅ | 8002 |
+| **Auth Gateway** | - | JWT + SQLite | - | - | ✅ | 8003 |
 
-**Frontend**: React Dashboard con autenticacion en puerto 5173
+**Frontend**: React Dashboard en puerto 5173 (dev) / nginx en Docker
+**Repositorio**: GitHub con Git LFS para archivos grandes (.pkl, .csv)
+**Containerizacion**: Docker Compose con healthchecks
+
+---
+
+## Aclaracion: Tipo de Sistema
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ESTE SISTEMA ES: Clasificacion Predictiva en Tiempo Real               │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ✅ LO QUE HACE:                                                        │
+│     • Recibe un email/login/flujo de red                                │
+│     • Clasifica: "ESTO ES phishing/ATO/brute force" (Si/No)             │
+│     • Genera alertas si supera umbrales de confianza                    │
+│     • Opera en TIEMPO REAL sobre eventos actuales                       │
+│                                                                         │
+│  ❌ LO QUE NO HACE (seria otro sistema):                                │
+│     • Predecir "en 48 horas habra un ataque"                            │
+│     • Forecasting temporal de amenazas                                  │
+│     • Analisis de tendencias futuras                                    │
+│                                                                         │
+│  📋 TRABAJO FUTURO (Fase 2):                                            │
+│     • Integracion con SIEM (Splunk, Elastic)                            │
+│     • Modelos de series temporales para forecasting                     │
+│     • Prediccion de probabilidad de ataques futuros                     │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Documentacion Adicional
+
+| Documento | Descripcion |
+|-----------|-------------|
+| `VARIABLES_MODELOS.md` | Variables dependientes/independientes de cada modelo, explicacion detallada de cada feature, importancia en la vida real segun investigaciones |
+| `CLAUDE.md` | Este archivo - guia tecnica del proyecto |
+| `docs/DOCUMENTACION_OBJETIVOS.md` | Documentacion de objetivos del proyecto de investigacion |
 
 ---
 
@@ -22,16 +64,38 @@
 ### Dataset
 - **Fuente**: CEAS_08
 - **Registros**: 39,154 emails (31,323 train / 7,831 test)
-- **Balance**: 44% Legítimo / 56% Phishing
+- **Balance**: 44% Legitimo / 56% Phishing
 
 ### Modelo
 - **Algoritmo**: Gradient Boosting
-- **Features**: 1,016 (1,000 TF-IDF + 16 numéricas)
-- **Métricas**:
-  - F1-Score: 99.01%
-  - Accuracy: 98.89%
-  - Precision: 98.73%
-  - Recall: 99.29%
+- **Features**: 1,016 (1,000 TF-IDF + 16 numericas)
+
+### Hiperparametros
+```yaml
+n_estimators: 100
+learning_rate: 0.1
+max_depth: 5
+min_samples_split: 2
+min_samples_leaf: 1
+subsample: 1.0
+```
+
+### Metricas
+| Metrica | Valor |
+|---------|-------|
+| F1-Score | 99.09% |
+| Accuracy | 98.98% |
+| Precision | 98.91% |
+| Recall | 99.27% |
+| ROC-AUC | 99.90% |
+
+### Features Criticas (segun investigacion)
+| Feature | Importancia | Razon |
+|---------|-------------|-------|
+| `url_count` | CRITICA | 75% de phishing tiene URLs maliciosas |
+| `has_urgent` | CRITICA | Presion psicologica es tactica principal |
+| `sender_domain_encoded` | CRITICA | 90%+ usan domain spoofing |
+| TF-IDF features | ALTA | Captura vocabulario predecible del phishing |
 
 ### Archivos Clave
 ```
@@ -42,7 +106,7 @@ Phishing/
 │   │   ├── predictor.py
 │   │   └── models.py
 │   ├── outputs/
-│   │   ├── models/best_model.pkl     # Gradient Boosting
+│   │   ├── models/best_model.pkl     # Gradient Boosting (via Git LFS)
 │   │   └── features/tfidf_vectorizer.pkl
 │   └── src/features/feature_engineering.py
 └── processed_data/
@@ -63,21 +127,56 @@ cd Phishing/modeling/api && uvicorn app:app --reload
 ### Dataset
 - **Fuente**: RBA Dataset (Risk-Based Authentication)
 - **Registros**: 85,141 (74,814 train / 17,029 test)
-- **Balance**: 0.17% ATO / 99.83% Normal (muy desbalanceado)
+- **Balance Original**: 0.17% ATO / 99.83% Normal (muy desbalanceado)
+- **Balance con SMOTE**: 9.09% ATO / 90.91% Normal (en train)
 
 ### Modelo
-- **Algoritmo**: Gradient Boosting
+- **Algoritmo**: Gradient Boosting + SMOTE
 - **Features**: 35 (temporal, comportamiento, agregados)
-- **Métricas**:
-  - F1-Score: 75.86%
-  - Accuracy: 99.88%
-  - Precision: 73.33%
-  - Recall: 78.57%
-  - ROC-AUC: 98.06%
+- **Manejo de Desbalance**: SMOTE aplicado solo a train set
+
+### Hiperparametros
+```yaml
+n_estimators: 100
+learning_rate: 0.1
+max_depth: 5
+min_samples_split: 5
+min_samples_leaf: 1
+subsample: 0.8
+
+# SMOTE config
+sampling_strategy: 0.1
+k_neighbors: 5
+```
+
+### Metricas
+| Metrica | Valor | Nota |
+|---------|-------|------|
+| F1-Score | 75.86% | Aceptable dado el desbalance |
+| Accuracy | 99.88% | Engañoso por desbalance |
+| Precision | 73.33% | |
+| Recall | 78.57% | Detecta ~8 de cada 10 ATOs |
+| ROC-AUC | 98.06% | Excelente separacion |
+
+### Features Criticas (segun investigacion)
+| Feature | Importancia | Razon |
+|---------|-------------|-------|
+| `country_changed` | CRITICA | **98.6% de ATOs tienen cambio de pais** |
+| `ip_changed` | CRITICA | Atacantes no pueden replicar ubicacion |
+| `is_suspicious_ip` | CRITICA | VPNs/proxies son red flags |
+| `is_rapid_login` | ALTA | "Viaje imposible" es firma de ATO |
 
 ### Insight Clave
-- **98.6% de ATOs tienen cambio de país** ← Feature más importante
-- 99.3% de ATOs son logins exitosos (no es Brute Force)
+> **98.6% de ATOs tienen cambio de pais** - Esta es la feature mas discriminante del modelo. Los atacantes fisicamente no pueden estar en el mismo pais que la victima.
+
+### Formulario Frontend (Mejoras 2026-02-04)
+- **Region**: Campo opcional (Bolivia no usa regiones comunmente)
+- **Pais**: Dropdown con 97 paises organizados por nivel de riesgo:
+  - **Bajo Riesgo (13)**: Bolivia, Argentina, Brasil, Chile, etc. (Sudamerica)
+  - **Riesgo Medio (37)**: USA, Canada, UK, Alemania, Japon, etc.
+  - **Alto Riesgo (47)**: Rusia, China, Nigeria, Iran, Corea del Norte, etc.
+- **Pais por defecto**: Bolivia (BO) - contexto local del proyecto
+- **Ejemplos precargados**: Login normal desde Bolivia, ATO desde Rusia
 
 ### Archivos Clave
 ```
@@ -87,7 +186,10 @@ Suspicious-Login-Activity/
 │   │   ├── app.py
 │   │   ├── predictor.py
 │   │   └── models.py
-│   └── outputs/models/best_model.pkl # Gradient Boosting
+│   ├── outputs/
+│   │   ├── models/best_model.pkl     # Gradient Boosting (via Git LFS)
+│   │   └── features/label_encoders.pkl
+│   └── src/models/train.py           # Incluye SMOTE
 └── processed_data/rba_reduced.csv
 ```
 
@@ -108,20 +210,60 @@ cd Suspicious-Login-Activity/modeling/api && uvicorn app:app --port 8001 --reloa
 
 ### Modelo
 - **Algoritmo**: Random Forest
-- **Features**: 60 (tráfico de red normalizado 0-1)
-- **Métricas**:
-  - F1-Score: 99.97%
-  - Accuracy: 99.97%
-  - Precision: 100%
-  - Recall: 99.94%
+- **Features**: 60 (trafico de red normalizado 0-1)
 
-### Features Discriminantes
-| Feature | Ratio Ataque/Normal | Interpretación |
+### Hiperparametros
+```yaml
+n_estimators: 100
+max_depth: 20
+min_samples_split: 10
+min_samples_leaf: 5
+n_jobs: -1
+```
+
+### Metricas
+| Metrica | Valor |
+|---------|-------|
+| F1-Score | 99.97% |
+| Accuracy | 99.97% |
+| Precision | 99.99% |
+| Recall | 99.99% |
+| ROC-AUC | 100% |
+
+### Features Criticas (segun investigacion)
+| Feature | Ratio Ataque/Normal | Interpretacion |
 |---------|---------------------|----------------|
-| Bwd Pkts/s | 112.7x | Velocidad extrema de bots |
-| Flow Pkts/s | 24.7x | Ataques automatizados |
-| PSH Flag Cnt | 1.96x | Firma de herramientas |
-| Flow Duration | 0.01x | Intentos rápidos |
+| `Bwd Pkts/s` | **112.7x** | Velocidad extrema de bots |
+| `Flow Pkts/s` | **24.7x** | Ataques automatizados |
+| `Flow Duration` | **0.01x** | Intentos muy rapidos |
+| `PSH Flag Cnt` | **1.96x** | Firma de herramientas de ataque |
+
+### Concepto: "Trafico Plano"
+Los ataques de fuerza bruta generan trafico con caracteristicas uniformes (duracion, tamaño de paquetes, timing) porque son scripts automatizados. Un humano no puede generar cientos de intentos por segundo con tiempos identicos.
+
+### Formulario Frontend (Mejoras 2026-02-04)
+- **Modal de Entrada Manual**: Permite ingresar los 60 campos individualmente
+- **12 Tabs organizados por categoria**:
+  1. Puerto/Protocolo (dst_port, protocol, timestamp)
+  2. Duracion del Flujo (flow_duration)
+  3. Paquetes Forward (tot_fwd_pkts, fwd_pkt_len_*)
+  4. Paquetes Backward (tot_bwd_pkts, bwd_pkt_len_*)
+  5. Bytes/Segundo (flow_byts_s, flow_pkts_s)
+  6. Tiempos Inter-Arribo (flow_iat_*, fwd_iat_*, bwd_iat_*)
+  7. Flags PSH/URG (fwd_psh_flags, bwd_psh_flags, etc.)
+  8. Paquetes/Segundo (fwd_pkts_s, bwd_pkts_s, pkt_len_*)
+  9. Flags TCP (fin_flag_cnt, rst_flag_cnt, psh_flag_cnt, etc.)
+  10. Ratios y Promedios (down_up_ratio, fwd_byts_b_avg, etc.)
+  11. Ventanas TCP (init_fwd_win_byts, init_bwd_win_byts, etc.)
+  12. Actividad/Inactividad (active_*, idle_*)
+
+- **4 Ejemplos precargados**:
+  | Ejemplo | Descripcion | Resultado Esperado |
+  |---------|-------------|-------------------|
+  | SSH Brute Force | Ataque al puerto 22 | ATAQUE (99%+) |
+  | FTP Brute Force | Ataque al puerto 21 | ATAQUE (99%+) |
+  | Web Brute Force | Ataque a login web (puerto 80/443) | ATAQUE (99%+) |
+  | Trafico Web Normal | Navegacion normal HTTP | NORMAL (99%+) |
 
 ### Archivos Clave
 ```
@@ -129,10 +271,9 @@ fuerza-bruta/
 ├── api/                              # API FastAPI
 │   ├── app.py
 │   ├── predictor.py
-│   ├── models.py
-│   └── .env
+│   └── models.py
 ├── modeling/outputs/models/
-│   └── random_forest_20260117_021309.pkl
+│   └── random_forest_20260117_021309.pkl  # (via Git LFS)
 └── processed_data/brute_force_balanced.csv
 ```
 
@@ -151,7 +292,14 @@ cd fuerza-bruta/api && uvicorn app:app --port 8002 --reload
 [Frontend React]  →  [Auth Gateway :8003]  →  [ML APIs :8000-8002]
                               ↓
                      [SQLite Database]
-                     (Users, Files, Reports, Alerts)
+                     (Users, Files, Reports, Alerts, Predictions)
+```
+
+### Configuracion JWT
+```yaml
+ACCESS_TOKEN_EXPIRE_MINUTES: 480  # 8 horas
+ALGORITHM: HS256
+MAX_FILE_SIZE_MB: 50
 ```
 
 ### Roles
@@ -164,31 +312,33 @@ cd fuerza-bruta/api && uvicorn app:app --port 8002 --reload
 - `admin` / `admin123` (rol: admin)
 - `analyst` / `analyst123` (rol: analyst)
 
-### Endpoints
+### Endpoints Principales
 | Metodo | Endpoint | Descripcion | Rol |
 |--------|----------|-------------|-----|
 | POST | /auth/login | Login, devuelve JWT | Publico |
 | GET | /auth/me | Info del usuario actual | Autenticado |
 | POST | /files/upload | Subir CSV/Excel | Admin |
-| GET | /files | Listar archivos | Admin |
 | POST | /reports/generate | Generar reporte | Admin |
 | GET | /reports | Listar reportes | Todos |
 | GET | /alerts | Listar alertas con filtros | Todos |
-| GET | /alerts/unread/count | Contador alertas no leidas | Todos |
 | GET | /alerts/stats | Estadisticas de alertas | Todos |
-| GET | /alerts/{id} | Detalle de alerta (marca como leida) | Todos |
-| POST | /alerts/{id}/acknowledge | Reconocer alerta | Todos |
-| POST | /alerts/acknowledge/bulk | Reconocer multiples alertas | Todos |
-| POST | /alerts/mark-all-read | Marcar todas como leidas | Todos |
-| GET | /alerts/thresholds | Ver umbrales configurados | Todos |
+| POST | /predictions/ | Guardar prediccion manual | Todos |
+| GET | /predictions/ | Listar predicciones con filtros | Todos |
+| GET | /predictions/stats | Estadisticas de predicciones | Todos |
 
-### Procesamiento de Predicciones
-El `report_service.py` procesa las respuestas de las APIs:
-- Las APIs devuelven `prediction: 0|1` (entero), no strings
-- `prediction=1` significa amenaza, `prediction=0` significa benigno
-- El campo `prediction_label` contiene el texto descriptivo
-- La confianza se convierte a porcentaje (*100)
-- **Tras procesar, se generan alertas automaticas** para amenazas que superen umbrales
+### Tabla Predictions (Auditoria de Predicciones Manuales)
+```sql
+predictions
+├── id (PK)
+├── model_type (phishing/ato/brute_force)
+├── created_by (FK -> users.id)
+├── created_at (timestamp)
+├── prediction (0/1)
+├── prediction_label (string)
+├── confidence (float 0-1)
+├── input_data (JSON)
+└── explanation (JSON)
+```
 
 ### Archivos Clave
 ```
@@ -196,31 +346,12 @@ auth-gateway/
 ├── app/
 │   ├── main.py              # FastAPI app
 │   ├── config.py            # Configuracion + umbrales de alertas
-│   ├── database.py          # SQLAlchemy setup
-│   ├── models/              # ORM models (User, File, Report, Alert)
-│   │   ├── user.py
-│   │   ├── file.py
-│   │   ├── report.py
-│   │   └── alert.py         # Modelo de alertas
+│   ├── models/              # ORM models (User, File, Report, Alert, Prediction)
 │   ├── schemas/             # Pydantic schemas
-│   │   ├── user.py
-│   │   ├── report.py
-│   │   └── alert.py         # Schemas de alertas
-│   ├── routers/             # Endpoints
-│   │   ├── auth.py
-│   │   ├── users.py
-│   │   ├── files.py
-│   │   ├── reports.py
-│   │   └── alerts.py        # Router de alertas
-│   └── services/
-│       ├── auth_service.py
-│       ├── file_service.py
-│       ├── report_service.py      # Procesa predicciones + genera alertas
-│       ├── prediction_client.py   # Cliente HTTP a APIs ML
-│       ├── column_detector.py     # Detecta modelo por columnas
-│       └── alert_service.py       # Generacion y gestion de alertas
-├── uploads/                 # Archivos subidos
-└── requirements.txt
+│   ├── routers/             # Endpoints (auth, users, files, reports, alerts, predictions)
+│   └── services/            # Logica de negocio
+├── uploads/                 # Archivos subidos (ignorado en git)
+└── Dockerfile               # Imagen Docker del servicio
 ```
 
 ### Ejecutar
@@ -233,289 +364,280 @@ cd auth-gateway && uvicorn app.main:app --port 8003 --reload
 
 ## 5. Sistema de Alertas Tempranas
 
-### Descripcion
-Generacion automatica de alertas basadas en umbrales de confianza cuando se procesan predicciones. Las alertas se generan en `report_service.py` tras procesar cada reporte.
-
 ### Umbrales por Modelo
 | Modelo | Critical (>=) | High (>=) | Medium (>=) | Justificacion |
 |--------|---------------|-----------|-------------|---------------|
-| Phishing | 95% | 85% | 75% | F1 99.01% - alta precision |
-| ATO | 90% | 80% | 70% | F1 75.86% - mas conservador |
+| Phishing | 95% | 85% | 75% | F1 99% - alta precision |
+| ATO | 90% | 80% | 70% | F1 75% - mas conservador |
 | Brute Force | 98% | 90% | 80% | F1 99.97% - precision muy alta |
-
-Los umbrales se configuran en `auth-gateway/app/config.py` (`ALERT_THRESHOLDS`).
-
-### Modelo de Datos Alert
-```python
-Alert:
-  id, title, description
-  severity: 'critical' | 'high' | 'medium'
-  status: 'unread' | 'read' | 'acknowledged'
-  model_type: 'phishing' | 'ato' | 'brute_force'
-  report_id (FK -> reports.id)
-  prediction_index, confidence, prediction_label, risk_level
-  created_at, read_at, acknowledged_at, acknowledged_by
-  raw_data_json  # JSON de la prediccion original
-```
 
 ### Flujo de Alertas
 1. Admin sube archivo CSV y genera reporte
 2. `report_service.py` envia datos a API ML correspondiente
-3. Al procesar resultados, `AlertService.generate_alerts_from_predictions()` evalua cada amenaza
-4. Si `confidence >= umbral_medium`, se crea una alerta con severidad correspondiente
+3. `AlertService.generate_alerts_from_predictions()` evalua cada amenaza
+4. Si `confidence >= umbral_medium`, se crea alerta con severidad correspondiente
 5. Frontend muestra badge con conteo en TopBar y Sidebar
-6. Usuarios pueden ver, filtrar y reconocer alertas en `/alerts`
-
-### Frontend - Integracion de Alertas
-- **TopBar**: Icono campana con badge dinamico (contador no leidas), click navega a `/alerts`
-- **Sidebar**: Pestaña "Alertas" con badge pill rojo, visible para todos los roles
-- **AlertContext**: Contexto global con polling cada 30 segundos para actualizar contadores
-- **AlertsPage**: Pagina completa con tarjetas de estadisticas, filtros y lista de alertas
-
-### Archivos Frontend de Alertas
-```
-frontend/src/
-├── services/
-│   └── alertService.js              # Cliente API alertas -> :8003
-├── context/
-│   └── AlertContext.jsx             # Estado global + polling 30s
-├── components/alerts/
-│   ├── AlertsList.jsx               # Tabla con seleccion multiple
-│   ├── AlertDetail.jsx              # Modal de detalle
-│   ├── AlertFilters.jsx             # Filtros status/severity/model
-│   └── AlertStatsCards.jsx          # Tarjetas de estadisticas
-└── pages/
-    └── AlertsPage.jsx               # Pagina principal de alertas
-```
 
 ---
 
-## 6. Explainabilidad de Predicciones
+## 6. Ejemplos de Prediccion Manual (Demo)
 
-### Descripcion
-Cada prediccion incluye un campo `explanation` que explica **por que** el modelo clasifico algo como amenaza o benigno. La explicacion muestra indicadores de riesgo especificos con evidencia detallada.
-
-### Estructura de Explicacion (Comun a todos los modelos)
-
-```python
-RiskIndicator:
-  indicator: str      # Descripcion del indicador
-  evidence: List[str] # Evidencia especifica encontrada
-  severity: str       # 'critical' | 'high' | 'medium' | 'low'
-
-Explanation:
-  risk_indicators: List[RiskIndicator]  # Indicadores con evidencia
-  summary: str                          # Resumen en lenguaje natural
-  total_indicators: int                 # Cantidad de indicadores
-  # + campos adicionales por modelo
+### Phishing - Email de Ataque
 ```
+Remitente: security-alert@paypa1.com
+Destinatario: victima@empresa.com
+Asunto: URGENTE: Su cuenta ha sido suspendida
+Cuerpo:
+Estimado Cliente,
 
-### Indicadores por Modelo
+Su cuenta de PayPal ha sido suspendida temporalmente por actividad inusual.
+Haga clic aqui inmediatamente para verificar su identidad: http://paypa1-secure.com/verify
 
-| Modelo | Indicadores Detectados | Campos Adicionales |
-|--------|------------------------|-------------------|
-| **Phishing** | URLs/enlaces, MAYUSCULAS, urgencia, "click here", credenciales, suplantacion de marca | `suspicious_terms: List[str]` |
-| **ATO** | Cambio de pais/IP/navegador/dispositivo/SO, horario nocturno, IP en lista negra, login rapido | `risk_factors: dict`, `key_features: dict`, `geo_info: dict` |
-| **Brute Force** | Tasa de paquetes alta, duracion de flujo corta, flags PSH/RST, puerto de ataque | `top_features: dict` |
+Si no verifica en 24 horas, su cuenta sera cerrada permanentemente.
 
-### Ejemplo de Respuesta API (Phishing)
-
-```json
-{
-  "prediction": 1,
-  "prediction_label": "Phishing",
-  "confidence": 0.95,
-  "explanation": {
-    "risk_indicators": [
-      {
-        "indicator": "Contiene URLs/enlaces",
-        "evidence": ["https://suspicious-link.com/login"],
-        "severity": "high"
-      },
-      {
-        "indicator": "Contiene lenguaje de urgencia",
-        "evidence": ["...Your account will be SUSPENDED immediately..."],
-        "severity": "medium"
-      }
-    ],
-    "suspicious_terms": ["urgent", "click", "verify"],
-    "summary": "Este email muestra 2 indicadores de phishing con 95.0% de confianza.",
-    "total_indicators": 2
-  }
-}
+Equipo de Seguridad PayPal
+URLs: 1
 ```
+**Resultado esperado**: PHISHING (97%+ confianza)
 
-### Frontend - Componente ExplainabilitySection
-
-**Archivo:** `frontend/src/components/results/ExplainabilitySection.jsx`
-
-Componente que muestra un boton "¿Por que esta prediccion?" que abre un modal con:
-- Resumen de la prediccion
-- Indicadores de riesgo en formato Accordion (expandibles)
-- Evidencia especifica para cada indicador
-- Badge de severidad (critical/high/medium/low)
-- Informacion adicional segun el modelo (geo_info, top_features, etc.)
-
-### Integracion en Frontend
-
-| Componente | Uso |
-|------------|-----|
-| `ResultsDisplay.jsx` | Prediccion manual - boton debajo de metricas |
-| `ReportDetail.jsx` | Reportes - columna "Explicacion" con modal por registro |
-| `AlertDetail.jsx` | Alertas - seccion visual arriba del JSON raw |
-
-### Archivos Modificados (Backend)
-
+### Phishing - Email Legitimo
 ```
-# Schemas Pydantic (models.py)
-Phishing/modeling/api/models.py           # PhishingExplanation + RiskIndicator
-Suspicious-Login-Activity/modeling/api/models.py  # ATOExplanation + RiskIndicator
-fuerza-bruta/api/models.py                # BruteForceExplanation + RiskIndicator
+Remitente: juan.perez@miempresa.com
+Destinatario: maria.garcia@miempresa.com
+Asunto: Reunion de equipo manana
+Cuerpo:
+Hola Maria,
 
-# Generacion de explicaciones (predictor.py)
-Phishing/modeling/api/predictor.py        # _generate_explanation()
-Suspicious-Login-Activity/modeling/api/predictor.py  # _generate_explanation()
-fuerza-bruta/api/predictor.py             # _generate_explanation()
+Te confirmo la reunion de equipo para manana a las 10:00 AM.
+Por favor, trae los reportes del mes pasado.
 
-# Auth Gateway
-auth-gateway/app/services/report_service.py   # Preserva campo explanation
-auth-gateway/app/services/alert_service.py    # Incluye explicacion en descripcion
+Saludos,
+Juan
+URLs: 0
 ```
+**Resultado esperado**: LEGITIMO (95%+ confianza)
+
+### Account Takeover - Login Sospechoso
+```
+Usuario: usuario_victima
+Pais: Rusia (RU) - ALTO RIESGO
+Region: (vacio)
+Login exitoso: No
+IP Cambiada: Si
+Dispositivo Cambiado: Si
+Hora: 03:00 (madrugada)
+ASN: 12345
+RTT: 450ms (latencia alta)
+```
+**Resultado esperado**: ACCOUNT TAKEOVER (85%+ confianza)
+
+### Account Takeover - Login Normal
+```
+Usuario: usuario_normal
+Pais: Bolivia (BO) - BAJO RIESGO
+Region: (vacio)
+Login exitoso: Si
+IP Cambiada: No
+Dispositivo Cambiado: No
+Hora: 09:30 (horario laboral)
+ASN: 27839
+RTT: 45ms (latencia baja)
+```
+**Resultado esperado**: LOGIN NORMAL (95%+ confianza)
 
 ---
 
-## Frontend (React Dashboard)
+## 7. Explainabilidad de Predicciones
 
-### Ejecutar
+Cada prediccion incluye un campo `explanation` con:
+- `risk_indicators`: Lista de indicadores con evidencia y severidad
+- `summary`: Resumen en lenguaje natural
+- Campos adicionales segun modelo (geo_info, top_features, etc.)
+
+Ver `VARIABLES_MODELOS.md` para explicacion detallada de cada variable.
+
+---
+
+## 8. Frontend (React Dashboard)
+
+### Ejecutar (Desarrollo)
 ```bash
 cd frontend && npm run dev
 # http://localhost:5173
 ```
 
+### Ejecutar (Produccion via Docker)
+El frontend se sirve desde nginx:alpine con optimizaciones de cache y headers de seguridad.
+
 ### Rutas
 | Ruta | Descripcion | Rol |
 |------|-------------|-----|
 | /login | Pagina de login | Publico |
-| /dashboard | **Dashboard con estadisticas** (Overview) | Todos |
+| /dashboard | Dashboard con estadisticas | Todos |
 | /dashboard/predict | Prediccion manual (3 modelos) | Todos |
 | /files | Gestion de archivos | Admin |
 | /reports | Lista de reportes con graficos | Todos |
-| /alerts | **Alertas tempranas** (lista, filtros, stats) | Todos |
+| /alerts | Alertas tempranas | Todos |
 | /users | Gestion de usuarios | Admin |
 
-### Layout
-- **Sidebar**: `position: fixed`, 260px, colapsa en <992px
-- **TopBar**: `position: sticky`, gradiente naranja, se mantiene fijo al scrollear
-- **MainLayout**: `.main-content` es el contenedor scrolleable (`height: 100vh; overflow-y: auto`)
-
-### Componentes Principales
-```
-frontend/src/components/
-├── layout/
-│   ├── MainLayout.jsx       # Contenedor principal (sidebar + content scrolleable)
-│   ├── Sidebar.jsx          # Navegacion lateral fija (260px, colapsa en <992px)
-│   └── TopBar.jsx           # Barra superior naranja sticky
-├── dashboard/
-│   ├── Dashboard.jsx        # Formularios de prediccion manual
-│   ├── DashboardOverview.jsx # Estadisticas y resumen
-│   └── ModelSelector.jsx    # Selector de modelos (grid responsive)
-├── results/
-│   ├── ResultsDisplay.jsx   # Muestra resultados de prediccion
-│   ├── ConfidenceMetrics.jsx # Metricas de confianza
-│   └── ExplainabilitySection.jsx  # Boton + modal de explicacion
-├── reports/
-│   ├── ReportsList.jsx      # Lista de reportes
-│   └── ReportDetail.jsx     # Detalle con graficos + explicacion
-├── alerts/
-│   ├── AlertsList.jsx       # Lista con seleccion multiple
-│   ├── AlertDetail.jsx      # Modal de detalle + explicacion
-│   ├── AlertFilters.jsx     # Filtros por status/severity/model
-│   └── AlertStatsCards.jsx  # Tarjetas de estadisticas
-└── ...
-```
-
-### Sistema de Design Tokens
-```
-frontend/src/styles/
-├── theme.js                 # Tokens JS (primitivos + semanticos)
-├── index.css                # Variables CSS globales
-├── dashboard.css            # Estilos del dashboard (responsive)
-├── components.css           # Componentes reutilizables
-└── custom-bootstrap.scss    # Bootstrap overrides + responsive
-```
-
 ### Paleta de Colores (BCP Corporate)
-- **Primario**: `#00498C` (Azul BCP)
-- **Acento**: `#FF7800` (Naranja BCP) - usado en TopBar
-- **Fondos**: `#FFFFFF`, `#F8F9FA`, `#F0F0F0`
-- **Texto**: `#333333` (primario), `#666666` (secundario)
+- **Primario**: `#004B8E` (Azul BCP)
+- **Acento**: `#F26E29` (Naranja BCP) - usado en TopBar
+- **Navy**: `#32335C` (texto oscuro)
 - **Status**: Success `#38A169`, Danger `#E53E3E`, Warning `#ECC94B`
 
-### TopBar
-- Fondo: Gradiente naranja (`#FF7800` → `#E56A00`)
-- Titulo: Texto blanco
-- Botones (alertas, usuario): Fondo blanco, iconos azules
-- Avatar: Fondo azul con letra blanca
-- Position: sticky top:0, z-index: 900
-
-### Breakpoints Responsive
-- **Desktop**: >= 992px (sidebar visible, grid 2 columnas)
-- **Tablet**: 768px - 992px (sidebar oculto, grid 1 columna)
-- **Mobile**: < 768px (estilos compactos)
-- **Small Mobile**: < 480px (model buttons en 1 columna)
-
-### Servicios
+### Sistema de Design Tokens (3 niveles)
 ```
-frontend/src/services/
-├── authService.js           # → localhost:8003 (Auth Gateway)
-├── fileService.js           # → localhost:8003 (Auth Gateway)
-├── reportService.js         # → localhost:8003 (Auth Gateway)
-├── alertService.js          # → localhost:8003 (Auth Gateway) - Alertas
-├── userService.js           # → localhost:8003 (Auth Gateway)
-├── phishingService.js       # → localhost:8000
-├── ataquesSospechososService.js # → localhost:8001
-└── fuerzaBrutaService.js    # → localhost:8002
+┌─────────────────────────────────────────────────────────────────────┐
+│  Nivel 1: Primitives (theme.js)                                     │
+│  → Paleta bruta de colores, nunca usar directamente                 │
+├─────────────────────────────────────────────────────────────────────┤
+│  Nivel 2: Semantic Tokens (theme.js)                                │
+│  → backgrounds, text, borders, interactive, status, surfaces        │
+├─────────────────────────────────────────────────────────────────────┤
+│  Nivel 3: Component Tokens (theme.js)                               │
+│  → sidebar, card, input, prediction                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│  CSS Variables (index.css)                                          │
+│  → ~100 variables CSS en :root exportadas desde theme.js            │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Contextos
+### Helper Functions (theme.js)
+```javascript
+getThreatColor(level)      // 'critical'|'high'|'medium'|'low' → color
+getPredictionBg(label)     // prediction label → background color
 ```
-frontend/src/context/
-├── AuthContext.jsx           # Autenticacion (user, token, login, logout)
-├── AlertContext.jsx          # Alertas (unreadCount, polling 30s, CRUD)
-└── DashboardContext.jsx      # Estado del dashboard de prediccion
+
+### Nginx (Produccion)
+- **Gzip**: Nivel 6, archivos >1KB
+- **Security Headers**: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+- **Cache**: 1 año para assets estaticos (js/css/images)
+- **SPA Routing**: Fallback a /index.html
+- **Healthcheck**: GET /health → 200 OK
+
+---
+
+## 9. Docker y Containerizacion
+
+### Ejecutar con Docker Compose (Produccion)
+```bash
+docker-compose up -d
+# Frontend: http://localhost:80
+# Auth Gateway: http://localhost:8003
+# APIs ML: puertos 8000-8002
+```
+
+### Ejecutar con Docker Compose (Desarrollo)
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+### Arquitectura de Contenedores
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     cybersecurity-network (bridge)                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │
+│  │ phishing-api │  │    ato-api   │  │brute-force-  │               │
+│  │    :8000     │  │    :8001     │  │  api :8002   │               │
+│  │  healthcheck │  │  healthcheck │  │  healthcheck │               │
+│  └──────────────┘  └──────────────┘  └──────────────┘               │
+│          │                 │                 │                       │
+│          └─────────────────┼─────────────────┘                       │
+│                            ▼                                         │
+│                  ┌──────────────────┐                                │
+│                  │   auth-gateway   │                                │
+│                  │      :8003       │                                │
+│                  │   healthcheck    │                                │
+│                  │  depends_on: ML  │                                │
+│                  └────────┬─────────┘                                │
+│                           │                                          │
+│            ┌──────────────┴──────────────┐                           │
+│            ▼                             ▼                           │
+│  ┌──────────────────┐         ┌──────────────────┐                   │
+│  │ auth-gateway-data│         │auth-gateway-     │                   │
+│  │   (SQLite DB)    │         │uploads (files)   │                   │
+│  └──────────────────┘         └──────────────────┘                   │
+│                                                                      │
+│                  ┌──────────────────┐                                │
+│                  │     frontend     │                                │
+│                  │   :80 (nginx)    │                                │
+│                  │   healthcheck    │                                │
+│                  │ depends_on: auth │                                │
+│                  └──────────────────┘                                │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Healthchecks
+Todos los servicios incluyen healthchecks con:
+- **Intervalo**: 30 segundos
+- **Timeout**: 10 segundos
+- **Retries**: 3
+- **Endpoint**: GET /health (o /docs para ML APIs)
+
+### Volumenes Persistentes
+| Volumen | Ruta en Container | Proposito |
+|---------|-------------------|-----------|
+| `auth-gateway-data` | `/app/data` | SQLite database |
+| `auth-gateway-uploads` | `/app/uploads` | Archivos subidos |
+
+### Variables de Entorno (Docker)
+```yaml
+# ML APIs (interno a Docker network)
+PHISHING_API_URL: http://phishing-api:8000
+ATO_API_URL: http://ato-api:8001
+BRUTE_FORCE_API_URL: http://brute-force-api:8002
+
+# Frontend
+VITE_API_URL: http://localhost:8003  # Auth Gateway
+```
+
+### Dockerfiles
+| Servicio | Base Image | Notas |
+|----------|------------|-------|
+| phishing-api | python:3.12-slim | uvicorn production |
+| ato-api | python:3.12-slim | uvicorn production |
+| brute-force-api | python:3.12-slim | uvicorn production |
+| auth-gateway | python:3.12-slim | uvicorn production |
+| frontend | nginx:alpine | Multi-stage build (3 etapas) |
+
+---
+
+## 10. Git y Repositorio
+
+### Git LFS
+El proyecto usa Git LFS para archivos grandes:
+```bash
+# Archivos trackeados por LFS
+*.pkl   # Modelos de ML
+*.csv   # Datasets
+*.joblib
+```
+
+### .gitignore
+- **Excluye**: datasets originales (~15GB), node_modules, __pycache__, .env, uploads
+- **Incluye (via LFS)**: best_model.pkl de cada modelo, tfidf_vectorizer.pkl, label_encoders.pkl
+
+### Configurar Git LFS en nuevo clone
+```bash
+git lfs install
+git lfs pull
 ```
 
 ---
 
-## Scripts de Utilidad
+## 11. Ejecutar Sistema Completo
 
-### Seed Data (Poblar BD con datos de prueba)
+### Opcion A: Docker Compose (Recomendado)
 ```bash
-source /home/megalodon/dev/cbproy/venv/bin/activate
-python seed_data.py
+docker-compose up -d
+# Todos los servicios inician automaticamente con healthchecks
 ```
 
-Genera:
-- 9 archivos CSV (3 por modelo) con datos reales de los datasets
-- 9 reportes con predicciones ejecutadas
-
-### Sincronizar Alertas (Generar alertas desde reportes existentes)
-```bash
-source /home/megalodon/dev/cbproy/venv/bin/activate
-cd auth-gateway && python ../sync_alerts.py
-```
-
-Recorre todos los reportes completados y genera alertas retroactivas para predicciones que superen los umbrales. Limpia alertas existentes antes de regenerar.
-
-### Regenerar Reportes
-```bash
-python regenerate_reports.py
-```
-
----
-
-## Ejecutar Sistema Completo
-
+### Opcion B: Manual (Desarrollo)
 ```bash
 # Terminal 1: Phishing API
 cd Phishing/modeling/api && uvicorn app:app --reload
@@ -535,107 +657,107 @@ cd frontend && npm run dev
 
 ---
 
-## Estructura del Proyecto
+## 12. Estructura del Proyecto
 
 ```
 pred_model/
-├── Phishing/                    # Deteccion de emails phishing
-│   ├── modeling/api/            # Puerto 8000
-│   ├── processed_data/
-│   └── analysis/
-│
-├── Suspicious-Login-Activity/   # Deteccion de Account Takeover
-│   ├── modeling/api/            # Puerto 8001
-│   ├── processed_data/
-│   └── analysis/
-│
-├── fuerza-bruta/                # Deteccion de Brute Force
-│   ├── api/                     # Puerto 8002
-│   ├── modeling/outputs/
-│   ├── processed_data/
-│   └── analysis/
-│
+├── Phishing/                    # Deteccion de emails phishing (Puerto 8000)
+│   └── modeling/api/Dockerfile  # Imagen Docker
+├── Suspicious-Login-Activity/   # Deteccion de Account Takeover (Puerto 8001)
+│   └── modeling/api/Dockerfile  # Imagen Docker
+├── fuerza-bruta/                # Deteccion de Brute Force (Puerto 8002)
+│   └── api/Dockerfile           # Imagen Docker
 ├── auth-gateway/                # Auth Gateway (Puerto 8003)
-│   ├── app/
-│   │   ├── models/              # User, File, Report, Alert
-│   │   ├── schemas/             # Pydantic schemas (user, report, alert)
-│   │   ├── routers/             # auth, users, files, reports, alerts
-│   │   └── services/            # auth, file, report, prediction_client, alert
-│   └── uploads/                 # Archivos CSV/Excel subidos
-│
-├── frontend/                    # React Dashboard (Puerto 5173)
-│   └── src/
-│       ├── components/
-│       │   ├── auth/            # Login, ProtectedRoute, RoleGuard
-│       │   ├── dashboard/       # Dashboard, DashboardOverview, ModelSelector
-│       │   ├── layout/          # Sidebar (fixed), TopBar (sticky), MainLayout
-│       │   ├── files/           # FileUpload, FileList, FilePreview
-│       │   ├── results/         # ResultsDisplay, ConfidenceMetrics, ExplainabilitySection
-│       │   ├── reports/         # ReportsList, ReportDetail (con explicacion)
-│       │   ├── alerts/          # AlertsList, AlertDetail (con explicacion), AlertFilters
-│       │   └── users/           # UserManagement
-│       ├── styles/              # Design Tokens (theme.js, CSS)
-│       ├── context/
-│       │   ├── AuthContext.jsx  # Autenticacion
-│       │   ├── AlertContext.jsx # Alertas (polling, unread count)
-│       │   └── DashboardContext.jsx
-│       ├── pages/               # LoginPage, DashboardPage, AlertsPage, etc.
-│       └── services/            # authService, alertService, reportService, etc.
-│
+│   └── Dockerfile               # Imagen Docker
+├── frontend/                    # React Dashboard (Puerto 5173 dev / 80 prod)
+│   ├── Dockerfile               # Multi-stage build
+│   └── nginx.conf               # Configuracion nginx produccion
+├── docs/                        # Documentacion adicional
+│   └── DOCUMENTACION_OBJETIVOS.md
+├── test_input_files/            # Archivos de prueba para APIs
+├── docker-compose.yml           # Produccion
+├── docker-compose.dev.yml       # Desarrollo
+├── .dockerignore                # Exclusiones para Docker build
 ├── seed_data.py                 # Script para poblar BD
-├── sync_alerts.py               # Script para sincronizar alertas con reportes existentes
-├── regenerate_reports.py        # Script para regenerar reportes
-└── CLAUDE.md                    # Este archivo
+├── sync_alerts.py               # Script para sincronizar alertas
+├── CLAUDE.md                    # Este archivo
+├── VARIABLES_MODELOS.md         # Documentacion de variables
+├── .gitignore                   # Configuracion de exclusiones
+└── .gitattributes               # Configuracion de Git LFS
 ```
 
 ---
 
-## Notas Técnicas
+## 13. Notas Tecnicas
 
 ### Dependencias
 - Python 3.12 con venv en `/home/megalodon/dev/cbproy/venv`
 - NumPy 1.26.3, Scikit-learn 1.8.0
 - FastAPI + Uvicorn para APIs
 - React + Vite para Frontend
-
-### Re-entrenar Modelos
-Si hay incompatibilidad de versiones NumPy:
-```bash
-cd Phishing/modeling && python retrain_model.py
-```
+- imbalanced-learn para SMOTE (modelo ATO)
 
 ### Formato de Respuesta de APIs ML
-Las APIs devuelven predicciones en formato:
 ```json
 {
   "prediction": 0,              // 0=benigno, 1=amenaza
   "prediction_label": "...",    // texto descriptivo
-  "confidence": 0.95,           // 0-1, se multiplica por 100 en report_service
-  "explanation": {              // Explicacion de la prediccion
-    "risk_indicators": [
-      {
-        "indicator": "...",     // Descripcion del indicador
-        "evidence": ["..."],    // Evidencia especifica
-        "severity": "high"      // critical | high | medium | low
-      }
-    ],
-    "summary": "...",           // Resumen en lenguaje natural
-    "total_indicators": 2       // Cantidad de indicadores
+  "confidence": 0.95,           // 0-1
+  "explanation": {
+    "risk_indicators": [...],
+    "summary": "...",
+    "total_indicators": 2
   }
 }
 ```
 
-### Mapeo de Tipos de Modelo (Frontend ↔ Backend)
-El frontend usa nombres diferentes para algunos modelos:
-
-| Frontend (modelType) | Backend (model_type) | API Puerto |
-|---------------------|---------------------|------------|
+### Mapeo de Tipos de Modelo
+| Frontend | Backend | Puerto |
+|----------|---------|--------|
 | `phishing` | `phishing` | 8000 |
 | `ataques_sospechosos` | `ato` | 8001 |
 | `fuerza_bruta` | `brute_force` | 8002 |
 
-El componente `ExplainabilitySection` maneja ambos nombres con aliases en el switch.
+### Servicios Frontend
+```
+frontend/src/services/
+├── api.js                    # Axios instance con interceptores
+├── phishingService.js        # Prediccion phishing
+├── ataquesSospechososService.js  # Prediccion ATO
+├── fuerzaBrutaService.js     # Prediccion brute force
+├── modelService.js           # Servicio unificado de modelos
+└── predictionService.js      # CRUD de predicciones (nuevo)
+```
 
 ---
 
-**Ultima Actualizacion**: 2026-01-29
+## 14. Estado de Completitud
+
+### Sistema Actual: COMPLETO para Clasificacion en Tiempo Real
+
+| Componente | Estado | Notas |
+|------------|--------|-------|
+| Modelo Phishing | ✅ | F1 99.09%, no requiere tuning |
+| Modelo ATO | ✅ | F1 75.86% + SMOTE, aceptable |
+| Modelo Brute Force | ✅ | F1 99.97%, excelente |
+| APIs REST | ✅ | FastAPI funcionando |
+| Auth Gateway | ✅ | JWT + roles (8h expiracion) |
+| Sistema de Alertas | ✅ | Umbrales configurables |
+| Sistema de Predicciones | ✅ | Auditoria de predicciones manuales |
+| Frontend Dashboard | ✅ | React + Design Tokens + Formularios mejorados |
+| Docker | ✅ | docker-compose con healthchecks |
+| Nginx (Produccion) | ✅ | Security headers + cache |
+| Explainability | ✅ | Explicaciones por prediccion |
+| Documentacion | ✅ | CLAUDE.md + VARIABLES_MODELOS.md |
+| Git LFS | ✅ | Modelos y datos grandes |
+
+### Trabajo Futuro (Fase 2)
+- Integracion con SIEM (Splunk, Elastic SIEM)
+- Modelos de series temporales para forecasting
+- Prediccion temporal ("en 48h habra ataque")
+- Reentrenamiento automatico de modelos
+- Kubernetes deployment
+
+---
+
+**Ultima Actualizacion**: 2026-02-04

@@ -61,11 +61,11 @@ function formatAPIResponse(apiResponse) {
  * @returns {string} Severity level
  */
 function getSeverityFromRiskScore(riskScore) {
-  if (riskScore >= 90) return 'Critical';
-  if (riskScore >= 70) return 'High';
-  if (riskScore >= 50) return 'Medium';
-  if (riskScore >= 30) return 'Low';
-  return 'Minimal';
+  if (riskScore >= 90) return 'Critico';
+  if (riskScore >= 70) return 'Alto';
+  if (riskScore >= 50) return 'Medio';
+  if (riskScore >= 30) return 'Bajo';
+  return 'Minimo';
 }
 
 export const ataquesSospechososService = {
@@ -153,7 +153,7 @@ export const ataquesSospechososService = {
           version: data.model_version,
           status: 'active',
           training_date: data.training_date,
-          description: 'Detects account takeover attempts using behavioral analysis',
+          description: 'Detecta intentos de toma de cuenta usando analisis de comportamiento',
           metrics: {
             f1_score: data.metrics.f1_score,
             accuracy: data.metrics.accuracy,
@@ -190,7 +190,7 @@ export const ataquesSospechososService = {
         success: false,
         error: {
           type: 'api',
-          message: 'Failed to get model information',
+          message: 'No se pudo obtener la informacion del modelo',
           originalError: error
         }
       };

@@ -14,9 +14,10 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import FilesPage from './pages/FilesPage';
-import ReportsPage from './pages/ReportsPage';
+import MonthlyReportsPage from './pages/MonthlyReportsPage';
 import AlertsPage from './pages/AlertsPage';
 import UsersPage from './pages/UsersPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -40,7 +41,7 @@ function App() {
             <Route
               path="/dashboard/predict"
               element={
-                <ProtectedRoute requiredRole="admin">
+                <ProtectedRoute requiredPermission="predictions">
                   <DashboardPage />
                 </ProtectedRoute>
               }
@@ -49,7 +50,7 @@ function App() {
               path="/reports"
               element={
                 <ProtectedRoute>
-                  <ReportsPage />
+                  <MonthlyReportsPage />
                 </ProtectedRoute>
               }
             />
@@ -58,6 +59,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AlertsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Profile route - All authenticated users */}
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />

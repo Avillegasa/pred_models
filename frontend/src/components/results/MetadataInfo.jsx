@@ -20,11 +20,11 @@ const MetadataInfo = ({ prediction }) => {
 
   return (
     <div className="metadata-section">
-      <h6 className="metadata-title">Model Information</h6>
+      <h6 className="metadata-title">Informacion del Modelo</h6>
 
       <div className="metadata-grid">
         <div className="metadata-item">
-          <span className="metadata-item-label">Model</span>
+          <span className="metadata-item-label">Modelo</span>
           <span className="metadata-item-value">
             {formatModelName(model)}
             {is_mock && (
@@ -35,21 +35,21 @@ const MetadataInfo = ({ prediction }) => {
 
         {features_count && (
           <div className="metadata-item">
-            <span className="metadata-item-label">Features</span>
+            <span className="metadata-item-label">Caracteristicas</span>
             <span className="metadata-item-value">{formatNumber(features_count)}</span>
           </div>
         )}
 
         {processing_time_ms && (
           <div className="metadata-item">
-            <span className="metadata-item-label">Processing Time</span>
+            <span className="metadata-item-label">Tiempo de Proceso</span>
             <span className="metadata-item-value">{formatProcessingTime(processing_time_ms)}</span>
           </div>
         )}
 
         {timestamp && (
           <div className="metadata-item">
-            <span className="metadata-item-label">Timestamp</span>
+            <span className="metadata-item-label">Marca de Tiempo</span>
             <span className="metadata-item-value">{formatDatetime(timestamp)}</span>
           </div>
         )}
@@ -59,7 +59,7 @@ const MetadataInfo = ({ prediction }) => {
       {prediction.attack_type && (
         <div className="mt-3">
           <div className="metadata-item">
-            <span className="metadata-item-label">Attack Type</span>
+            <span className="metadata-item-label">Tipo de Ataque</span>
             <span className="metadata-item-value">
               <Badge bg="danger">{prediction.attack_type}</Badge>
             </span>
@@ -70,7 +70,7 @@ const MetadataInfo = ({ prediction }) => {
       {prediction.severity && (
         <div className="mt-2">
           <div className="metadata-item">
-            <span className="metadata-item-label">Severity</span>
+            <span className="metadata-item-label">Severidad</span>
             <span className="metadata-item-value">
               <Badge bg="warning">{prediction.severity}</Badge>
             </span>
@@ -81,7 +81,7 @@ const MetadataInfo = ({ prediction }) => {
       {prediction.threat_level && (
         <div className="mt-2">
           <div className="metadata-item">
-            <span className="metadata-item-label">Threat Level</span>
+            <span className="metadata-item-label">Nivel de Amenaza</span>
             <span className="metadata-item-value">
               <Badge bg="danger">{prediction.threat_level}</Badge>
             </span>
@@ -92,10 +92,10 @@ const MetadataInfo = ({ prediction }) => {
       {prediction.blocked_recommendation !== undefined && (
         <div className="mt-2">
           <div className="metadata-item">
-            <span className="metadata-item-label">Block Recommended</span>
+            <span className="metadata-item-label">Se Recomienda Bloquear</span>
             <span className="metadata-item-value">
               <Badge bg={prediction.blocked_recommendation ? 'danger' : 'success'}>
-                {prediction.blocked_recommendation ? 'Yes' : 'No'}
+                {prediction.blocked_recommendation ? 'Si' : 'No'}
               </Badge>
             </span>
           </div>

@@ -12,6 +12,170 @@ import numpy as np
 from datetime import datetime
 from typing import Dict, List, Tuple
 
+# =============================================================================
+# CONFIGURACIÓN GEOGRÁFICA PARA DETECCIÓN DE ATO - CONTEXTO BOLIVIA
+# =============================================================================
+
+# Regiones normales de tráfico (Bolivia y Sudamérica)
+NORMAL_COUNTRIES = {
+    'BO',  # Bolivia (país principal)
+    'AR',  # Argentina
+    'PE',  # Perú
+    'BR',  # Brasil
+    'CL',  # Chile
+    'PY',  # Paraguay
+    'CO',  # Colombia
+    'EC',  # Ecuador
+    'VE',  # Venezuela
+    'UY',  # Uruguay
+    'GY',  # Guyana
+    'SR',  # Surinam
+    'GF',  # Guayana Francesa
+}
+
+# Departamentos de Bolivia
+BOLIVIA_REGIONS = {
+    'La Paz', 'Oruro', 'Potosi', 'Cochabamba', 'Tarija',
+    'Chuquisaca', 'Santa Cruz', 'Beni', 'Pando'
+}
+
+# Países de ALTO RIESGO - Historial significativo de ciberataques
+HIGH_RISK_COUNTRIES = {
+    # Ex-URSS / Europa del Este
+    'RU',  # Rusia - Principal fuente de APTs
+    'UA',  # Ucrania
+    'BY',  # Bielorrusia
+    'MD',  # Moldavia
+    'KZ',  # Kazajistán
+    'UZ',  # Uzbekistán
+    'TM',  # Turkmenistán
+    'KG',  # Kirguistán
+    'TJ',  # Tayikistán
+    'AZ',  # Azerbaiyán
+    'GE',  # Georgia
+    'AM',  # Armenia
+
+    # Asia Oriental
+    'CN',  # China - APTs estatales
+    'KP',  # Corea del Norte - Lazarus Group
+    'MN',  # Mongolia
+
+    # Medio Oriente
+    'IR',  # Irán - APT33, APT34
+    'IQ',  # Irak
+    'SY',  # Siria
+    'YE',  # Yemen
+    'AF',  # Afganistán
+    'LB',  # Líbano
+
+    # África (fuentes comunes de fraude)
+    'NG',  # Nigeria - Fraude 419
+    'GH',  # Ghana
+    'CM',  # Camerún
+    'CI',  # Costa de Marfil
+    'SN',  # Senegal
+    'KE',  # Kenia
+    'ZA',  # Sudáfrica
+    'EG',  # Egipto
+    'MA',  # Marruecos
+    'DZ',  # Argelia
+    'TN',  # Túnez
+
+    # Sudeste Asiático
+    'VN',  # Vietnam
+    'TH',  # Tailandia
+    'PH',  # Filipinas
+    'ID',  # Indonesia
+    'MY',  # Malasia
+    'MM',  # Myanmar
+    'KH',  # Camboya
+    'LA',  # Laos
+    'BD',  # Bangladesh
+    'PK',  # Pakistán
+    'IN',  # India
+    'NP',  # Nepal
+    'LK',  # Sri Lanka
+}
+
+# Países de RIESGO MEDIO - Lejanos pero no críticos
+MEDIUM_RISK_COUNTRIES = {
+    # Norteamérica
+    'US',  # Estados Unidos
+    'CA',  # Canadá
+    'MX',  # México
+
+    # Europa Occidental
+    'DE',  # Alemania
+    'FR',  # Francia
+    'GB',  # Reino Unido
+    'ES',  # España
+    'IT',  # Italia
+    'NL',  # Países Bajos
+    'BE',  # Bélgica
+    'PT',  # Portugal
+    'AT',  # Austria
+    'CH',  # Suiza
+    'IE',  # Irlanda
+    'SE',  # Suecia
+    'NO',  # Noruega
+    'DK',  # Dinamarca
+    'FI',  # Finlandia
+
+    # Europa Central/Sur
+    'PL',  # Polonia
+    'CZ',  # Chequia
+    'HU',  # Hungría
+    'RO',  # Rumania
+    'BG',  # Bulgaria
+    'GR',  # Grecia
+    'HR',  # Croacia
+    'SK',  # Eslovaquia
+    'SI',  # Eslovenia
+    'RS',  # Serbia
+    'BA',  # Bosnia
+    'AL',  # Albania
+    'MK',  # Macedonia
+
+    # Oceanía
+    'AU',  # Australia
+    'NZ',  # Nueva Zelanda
+
+    # Asia Desarrollada
+    'JP',  # Japón
+    'KR',  # Corea del Sur
+    'SG',  # Singapur
+    'HK',  # Hong Kong
+    'TW',  # Taiwán
+}
+
+# Mapeo de códigos de país a nombres (para explicaciones legibles)
+COUNTRY_NAMES = {
+    'BO': 'Bolivia', 'AR': 'Argentina', 'PE': 'Perú', 'BR': 'Brasil',
+    'CL': 'Chile', 'PY': 'Paraguay', 'CO': 'Colombia', 'EC': 'Ecuador',
+    'VE': 'Venezuela', 'UY': 'Uruguay', 'GY': 'Guyana', 'SR': 'Surinam',
+    'GF': 'Guayana Francesa', 'RU': 'Rusia', 'UA': 'Ucrania', 'BY': 'Bielorrusia',
+    'MD': 'Moldavia', 'KZ': 'Kazajistán', 'UZ': 'Uzbekistán', 'TM': 'Turkmenistán',
+    'KG': 'Kirguistán', 'TJ': 'Tayikistán', 'AZ': 'Azerbaiyán', 'GE': 'Georgia',
+    'AM': 'Armenia', 'CN': 'China', 'KP': 'Corea del Norte', 'MN': 'Mongolia',
+    'IR': 'Irán', 'IQ': 'Irak', 'SY': 'Siria', 'YE': 'Yemen', 'AF': 'Afganistán',
+    'LB': 'Líbano', 'NG': 'Nigeria', 'GH': 'Ghana', 'CM': 'Camerún',
+    'CI': 'Costa de Marfil', 'SN': 'Senegal', 'KE': 'Kenia', 'ZA': 'Sudáfrica',
+    'EG': 'Egipto', 'MA': 'Marruecos', 'DZ': 'Argelia', 'TN': 'Túnez',
+    'VN': 'Vietnam', 'TH': 'Tailandia', 'PH': 'Filipinas', 'ID': 'Indonesia',
+    'MY': 'Malasia', 'MM': 'Myanmar', 'KH': 'Camboya', 'LA': 'Laos',
+    'BD': 'Bangladesh', 'PK': 'Pakistán', 'IN': 'India', 'NP': 'Nepal',
+    'LK': 'Sri Lanka', 'US': 'Estados Unidos', 'CA': 'Canadá', 'MX': 'México',
+    'DE': 'Alemania', 'FR': 'Francia', 'GB': 'Reino Unido', 'ES': 'España',
+    'IT': 'Italia', 'NL': 'Países Bajos', 'BE': 'Bélgica', 'PT': 'Portugal',
+    'AT': 'Austria', 'CH': 'Suiza', 'IE': 'Irlanda', 'SE': 'Suecia',
+    'NO': 'Noruega', 'DK': 'Dinamarca', 'FI': 'Finlandia', 'PL': 'Polonia',
+    'CZ': 'Chequia', 'HU': 'Hungría', 'RO': 'Rumania', 'BG': 'Bulgaria',
+    'GR': 'Grecia', 'HR': 'Croacia', 'SK': 'Eslovaquia', 'SI': 'Eslovenia',
+    'RS': 'Serbia', 'BA': 'Bosnia', 'AL': 'Albania', 'MK': 'Macedonia',
+    'AU': 'Australia', 'NZ': 'Nueva Zelanda', 'JP': 'Japón', 'KR': 'Corea del Sur',
+    'SG': 'Singapur', 'HK': 'Hong Kong', 'TW': 'Taiwán',
+}
+
 # Add parent directory to path to import feature engineering
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
@@ -193,6 +357,62 @@ class AccountTakeoverPredictor:
 
         return df
 
+    def _evaluate_geographic_risk(self, country: str, region: str) -> dict:
+        """
+        Evaluate geographic risk based on login location.
+        Adapted for Bolivia/South America context.
+
+        Args:
+            country: Country code (e.g., 'BO', 'RU')
+            region: Region/state name
+
+        Returns:
+            Dictionary with risk_level, reason, score, and country_name
+        """
+        country = country.upper() if country else ''
+        country_name = COUNTRY_NAMES.get(country, country)
+
+        if country in HIGH_RISK_COUNTRIES:
+            return {
+                'risk_level': 'high',
+                'reason': f'Login desde país de alto riesgo: {country_name} ({country})',
+                'score': 0.8,
+                'country_name': country_name
+            }
+        elif country not in NORMAL_COUNTRIES:
+            if country in MEDIUM_RISK_COUNTRIES:
+                return {
+                    'risk_level': 'medium',
+                    'reason': f'Login desde país fuera de la región normal: {country_name} ({country})',
+                    'score': 0.4,
+                    'country_name': country_name
+                }
+            else:
+                # Unknown country, treat as medium risk
+                return {
+                    'risk_level': 'medium',
+                    'reason': f'Login desde ubicación inusual: {country_name or country}',
+                    'score': 0.3,
+                    'country_name': country_name or country
+                }
+
+        # Country is in NORMAL_COUNTRIES (Bolivia or South America)
+        # Check if it's Bolivia with a known region
+        if country == 'BO' and region in BOLIVIA_REGIONS:
+            return {
+                'risk_level': 'low',
+                'reason': f'Login desde Bolivia, {region}',
+                'score': 0.0,
+                'country_name': country_name
+            }
+
+        return {
+            'risk_level': 'low',
+            'reason': f'Login desde región normal: {country_name} ({country})',
+            'score': 0.0,
+            'country_name': country_name
+        }
+
     def _generate_explanation(
         self,
         features_df: pd.DataFrame,
@@ -364,6 +584,40 @@ class AccountTakeoverPredictor:
             risk_factors['is_abnormal_rtt'] = 0.05
         key_features['is_abnormal_rtt'] = bool(row.get('is_abnormal_rtt', 0))
 
+        # =============================================================
+        # GEOGRAPHIC RISK EVALUATION (Bolivia/South America context)
+        # =============================================================
+        country = login_data.get('country', '')
+        region = login_data.get('region', '')
+        geo_risk = self._evaluate_geographic_risk(country, region)
+
+        # Add geographic risk indicator if not low risk
+        if geo_risk['risk_level'] == 'high':
+            risk_indicators.append({
+                "indicator": "Login desde ubicación de alto riesgo",
+                "evidence": [
+                    f"País: {geo_risk['country_name']} ({country.upper()})",
+                    "Este país tiene historial significativo de ciberataques",
+                    "Países de alto riesgo incluyen: Rusia, China, Corea del Norte, Irán, Nigeria, etc."
+                ],
+                "severity": "critical"
+            })
+            risk_factors['geographic_risk'] = geo_risk['score']
+        elif geo_risk['risk_level'] == 'medium':
+            risk_indicators.append({
+                "indicator": "Login desde ubicación inusual",
+                "evidence": [
+                    f"País: {geo_risk['country_name']} ({country.upper()})",
+                    "Login fuera de la región geográfica normal (Bolivia/Sudamérica)",
+                    geo_risk['reason']
+                ],
+                "severity": "medium"
+            })
+            risk_factors['geographic_risk'] = geo_risk['score']
+
+        key_features['geographic_risk_level'] = geo_risk['risk_level']
+        key_features['is_normal_region'] = geo_risk['risk_level'] == 'low'
+
         # Add geographic info
         geo_info = {
             "country": login_data.get('country', 'N/A'),
@@ -396,6 +650,96 @@ class AccountTakeoverPredictor:
             "summary": summary,
             "total_indicators": num_indicators
         }
+
+    def _generate_metrics_analysis(
+        self,
+        features_df: pd.DataFrame,
+        login_data: dict
+    ) -> List[Dict]:
+        """
+        Generate metrics analysis comparing current values against normal ranges.
+        Returns a list of metric comparisons for the frontend to display.
+
+        Args:
+            features_df: DataFrame with engineered features
+            login_data: Original login data
+
+        Returns:
+            List of metric analysis dictionaries
+        """
+        metrics_analysis = []
+        row = features_df.iloc[0] if len(features_df) > 0 else {}
+
+        # RTT (Round-Trip Time)
+        rtt = login_data.get('rtt', 0)
+        rtt_anomalous = rtt < 200 or rtt > 1500
+        rtt_direction = "low" if rtt < 200 else ("high" if rtt > 1500 else None)
+        metrics_analysis.append({
+            "metric_name": "Round-Trip Time (RTT)",
+            "metric_key": "rtt",
+            "normal_range": {"min": 500, "max": 800},
+            "current_value": round(rtt, 2),
+            "is_anomalous": rtt_anomalous,
+            "anomaly_direction": rtt_direction,
+            "interpretation": "Latencia anomala puede indicar uso de proxy/VPN" if rtt_anomalous else "Tiempo de respuesta de red dentro del rango esperado"
+        })
+
+        # Time since last login
+        time_since = row.get('time_since_last_login_hours', 0)
+        time_anomalous = time_since < 0.5 if time_since > 0 else False
+        metrics_analysis.append({
+            "metric_name": "Tiempo desde ultimo login",
+            "metric_key": "time_since_last_login",
+            "normal_range": {"min": 0.5, "max": 24},
+            "current_value": round(float(time_since), 2),
+            "is_anomalous": time_anomalous,
+            "anomaly_direction": "low" if time_anomalous else None,
+            "interpretation": "Login muy rapido puede indicar acceso automatizado" if time_anomalous else "Intervalo de tiempo normal entre logins"
+        })
+
+        # IP count per user (aggregated)
+        ip_count = row.get('ip_count_per_user', 1)
+        ip_anomalous = ip_count > 5
+        metrics_analysis.append({
+            "metric_name": "IPs por usuario",
+            "metric_key": "ip_count_per_user",
+            "normal_range": {"min": 1, "max": 3},
+            "current_value": int(ip_count),
+            "is_anomalous": ip_anomalous,
+            "anomaly_direction": "high" if ip_anomalous else None,
+            "interpretation": "Multiples IPs pueden indicar cuenta comprometida" if ip_anomalous else "Numero de IPs dentro del rango normal"
+        })
+
+        # Geographic risk evaluation
+        country = login_data.get('country', '')
+        geo_risk = self._evaluate_geographic_risk(country, login_data.get('region', ''))
+        geo_anomalous = geo_risk['risk_level'] in ['high', 'medium']
+        risk_score = geo_risk['score']
+        metrics_analysis.append({
+            "metric_name": "Riesgo Geografico",
+            "metric_key": "country_risk",
+            "normal_range": {"min": 0, "max": 0.1},
+            "current_value": round(risk_score, 2),
+            "is_anomalous": geo_anomalous,
+            "anomaly_direction": "high" if geo_anomalous else None,
+            "interpretation": geo_risk['reason'] if geo_anomalous else f"Login desde ubicacion normal: {geo_risk['country_name']}"
+        })
+
+        # RTT z-score
+        rtt_zscore = row.get('rtt_zscore', 0)
+        zscore_anomalous = abs(rtt_zscore) > 2
+        zscore_direction = "high" if rtt_zscore > 2 else ("low" if rtt_zscore < -2 else None)
+        metrics_analysis.append({
+            "metric_name": "RTT Z-Score",
+            "metric_key": "rtt_zscore",
+            "normal_range": {"min": -2, "max": 2},
+            "current_value": round(float(rtt_zscore), 2),
+            "is_anomalous": zscore_anomalous,
+            "anomaly_direction": zscore_direction,
+            "interpretation": "Desviacion estadistica significativa del RTT esperado" if zscore_anomalous else "RTT dentro de la desviacion estandar normal"
+        })
+
+        return metrics_analysis
 
     def _engineer_features_simple(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -616,7 +960,10 @@ class AccountTakeoverPredictor:
         # Step 6: Generate explanation
         explanation = self._generate_explanation(X, login_data, prediction, confidence)
 
-        # Step 7: Format response
+        # Step 7: Generate metrics analysis
+        metrics_analysis = self._generate_metrics_analysis(X, login_data)
+
+        # Step 8: Format response
         processing_time_ms = (time.time() - start_time) * 1000
 
         result = {
@@ -627,6 +974,7 @@ class AccountTakeoverPredictor:
             'probability_ato': prob_ato,
             'risk_score': risk_score,
             'explanation': explanation,
+            'metrics_analysis': metrics_analysis,
             'metadata': {
                 'model': self.get_model_name(),
                 'features_count': self.get_features_count(),
@@ -663,7 +1011,8 @@ class AccountTakeoverPredictor:
                 'prediction_label': single_result['prediction_label'],
                 'confidence': single_result['confidence'],
                 'risk_score': single_result['risk_score'],
-                'explanation': single_result['explanation']
+                'explanation': single_result['explanation'],
+                'metrics_analysis': single_result['metrics_analysis']
             })
 
         processing_time_ms = (time.time() - start_time) * 1000

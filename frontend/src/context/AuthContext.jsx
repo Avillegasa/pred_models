@@ -5,6 +5,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import authService from '../services/authService';
+import profileService from '../services/profileService';
 
 const AuthContext = createContext(null);
 
@@ -13,8 +14,22 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  // Load full user profile from API
+  const loadUserProfile = useCallback(async () => {
+    try {
+      const profile = await profileService.getProfile();
+      setUser(prevUser => ({
+        ...prevUser,
+        ...profile,
+        permissions: profile.permissions || {}
+      }));
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }, []);
+
   // Decode token and set user info
-  const decodeAndSetUser = useCallback((tokenValue) => {
+  const decodeAndSetUser = useCallback(async (tokenValue) => {
     if (!tokenValue) {
       setUser(null);
       return null;
@@ -34,9 +49,14 @@ export function AuthProvider({ children }) {
       const userInfo = {
         username: decoded.sub,
         role: decoded.role,
-        exp: decoded.exp
+        exp: decoded.exp,
+        permissions: {} // Will be loaded from profile
       };
       setUser(userInfo);
+
+      // Load full profile to get permissions
+      await loadUserProfile();
+
       return userInfo;
     } catch (error) {
       console.error('Error decoding token:', error);
@@ -45,15 +65,18 @@ export function AuthProvider({ children }) {
       setUser(null);
       return null;
     }
-  }, []);
+  }, [loadUserProfile]);
 
   // Initialize auth state from stored token
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      decodeAndSetUser(storedToken);
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        await decodeAndSetUser(storedToken);
+      }
+      setLoading(false);
+    };
+    initAuth();
   }, [decodeAndSetUser]);
 
   // Login function
@@ -64,7 +87,7 @@ export function AuthProvider({ children }) {
 
       localStorage.setItem('token', newToken);
       setToken(newToken);
-      decodeAndSetUser(newToken);
+      await decodeAndSetUser(newToken);
 
       return { success: true };
     } catch (error) {
@@ -92,6 +115,20 @@ export function AuthProvider({ children }) {
     return user?.role === 'admin';
   };
 
+  // Check if user has specific permission
+  const hasPermission = useCallback((permission) => {
+    if (!user) return false;
+    // Admin always has all permissions
+    if (user.role === 'admin') return true;
+    // Check specific permission for analysts
+    return user.permissions?.[permission] === true;
+  }, [user]);
+
+  // Refresh user profile (call after profile updates)
+  const refreshProfile = useCallback(async () => {
+    await loadUserProfile();
+  }, [loadUserProfile]);
+
   // Check if user is authenticated
   const isAuthenticated = useCallback(() => {
     return !!user && !!token;
@@ -105,6 +142,8 @@ export function AuthProvider({ children }) {
     logout,
     hasRole,
     isAdmin,
+    hasPermission,
+    refreshProfile,
     isAuthenticated
   };
 

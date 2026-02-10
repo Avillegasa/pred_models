@@ -43,6 +43,21 @@ function UsersPage() {
     loadUsers();
   };
 
+  const handleUpdateRole = async (userId, role) => {
+    await userService.updateRole(userId, role);
+    loadUsers();
+  };
+
+  const handleUpdatePermissions = async (userId, permissions) => {
+    await userService.updatePermissions(userId, permissions);
+    loadUsers();
+  };
+
+  const handleResetPassword = async (userId, newPassword) => {
+    await userService.resetPassword(userId, newPassword);
+    // No need to reload users for password reset
+  };
+
   return (
     <MainLayout title="Gestion de Usuarios">
       <Card className="shadow-sm">
@@ -53,6 +68,9 @@ function UsersPage() {
             onCreate={handleCreate}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
+            onUpdateRole={handleUpdateRole}
+            onUpdatePermissions={handleUpdatePermissions}
+            onResetPassword={handleResetPassword}
           />
         </Card.Body>
       </Card>

@@ -14,7 +14,7 @@ const ModelSelector = () => {
 
   return (
     <div className="model-selector">
-      <h6 className="model-selector-title">Select Detection Model</h6>
+      <h6 className="model-selector-title">Seleccionar Modelo de Deteccion</h6>
       <div className="model-buttons">
         {models.map((model) => (
           <ModelButton

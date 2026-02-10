@@ -53,7 +53,7 @@ phishingApi.interceptors.response.use(
     if (error.code === 'ECONNABORTED') {
       return Promise.reject({
         type: 'timeout',
-        message: 'Request timeout. The server took too long to respond.',
+        message: 'Tiempo de espera agotado. El servidor tardo demasiado en responder.',
         originalError: error
       });
     }
@@ -61,7 +61,7 @@ phishingApi.interceptors.response.use(
     if (error.code === 'ERR_NETWORK') {
       return Promise.reject({
         type: 'network',
-        message: 'Cannot connect to API. Please check if the server is running.',
+        message: 'No se puede conectar a la API. Verifique que el servidor este en ejecucion.',
         originalError: error
       });
     }
@@ -70,7 +70,7 @@ phishingApi.interceptors.response.use(
       // Server responded with error status
       return Promise.reject({
         type: 'api',
-        message: error.response.data?.detail || error.response.data?.message || 'API request failed',
+        message: error.response.data?.detail || error.response.data?.message || 'Error en la solicitud de API',
         status: error.response.status,
         data: error.response.data,
         originalError: error
@@ -80,7 +80,7 @@ phishingApi.interceptors.response.use(
     // Unknown error
     return Promise.reject({
       type: 'unknown',
-      message: error.message || 'An unexpected error occurred',
+      message: error.message || 'Ocurrio un error inesperado',
       originalError: error
     });
   }
@@ -88,23 +88,23 @@ phishingApi.interceptors.response.use(
 
 // Helper function to format API errors for display
 export const formatApiError = (error) => {
-  if (!error) return { title: 'Error', message: 'An unknown error occurred' };
+  if (!error) return { title: 'Error', message: 'Ocurrio un error desconocido' };
 
   const errorTypes = {
     timeout: {
-      title: 'Request Timeout',
+      title: 'Tiempo de Espera Agotado',
       icon: '⏱️'
     },
     network: {
-      title: 'Connection Error',
+      title: 'Error de Conexion',
       icon: '🌐'
     },
     api: {
-      title: 'API Error',
+      title: 'Error de API',
       icon: '⚠️'
     },
     validation: {
-      title: 'Validation Error',
+      title: 'Error de Validacion',
       icon: '📝'
     },
     unknown: {

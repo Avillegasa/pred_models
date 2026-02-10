@@ -12,6 +12,7 @@ import PredictionCard from './PredictionCard';
 import ConfidenceMetrics from './ConfidenceMetrics';
 import MetadataInfo from './MetadataInfo';
 import ExplainabilitySection from './ExplainabilitySection';
+import MetricsAnalysisSection from './MetricsAnalysisSection';
 
 const ResultsDisplay = () => {
   const { prediction, isLoading, hasError, hasData, isEmpty, clearPrediction, selectedModel } = useDashboard();
@@ -20,7 +21,7 @@ const ResultsDisplay = () => {
   if (isLoading) {
     return (
       <div className="results-card">
-        <LoadingSpinner message="Analyzing threat..." />
+        <LoadingSpinner message="Analizando amenaza..." />
       </div>
     );
   }
@@ -29,7 +30,7 @@ const ResultsDisplay = () => {
   if (hasError) {
     return (
       <div className="results-card">
-        <h3 className="form-card-title">Prediction Results</h3>
+        <h3 className="form-card-title">Resultados de Prediccion</h3>
         <ErrorAlert error={prediction.error} onDismiss={clearPrediction} />
       </div>
     );
@@ -41,9 +42,9 @@ const ResultsDisplay = () => {
       <div className="results-card">
         <div className="results-card-empty">
           <FiTarget className="results-card-empty-icon" />
-          <p className="results-card-empty-text">No results yet</p>
+          <p className="results-card-empty-text">Sin resultados aun</p>
           <small className="text-muted">
-            Fill out the form and click Predict to analyze the data
+            Complete el formulario y haga clic en Predecir para analizar los datos
           </small>
         </div>
       </div>
@@ -56,7 +57,7 @@ const ResultsDisplay = () => {
 
     return (
       <div className="results-card">
-        <h3 className="form-card-title">Prediction Results</h3>
+        <h3 className="form-card-title">Resultados de Prediccion</h3>
 
         {/* Main Prediction */}
         <PredictionCard prediction={prediction.data} />
@@ -68,6 +69,15 @@ const ResultsDisplay = () => {
         {prediction.data?.explanation && (
           <ExplainabilitySection
             explanation={prediction.data.explanation}
+            modelType={selectedModel}
+            isThreat={isThreat}
+          />
+        )}
+
+        {/* Metrics Analysis Section */}
+        {prediction.data?.metrics_analysis && (
+          <MetricsAnalysisSection
+            metrics={prediction.data.metrics_analysis}
             modelType={selectedModel}
             isThreat={isThreat}
           />

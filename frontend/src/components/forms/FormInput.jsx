@@ -41,7 +41,7 @@ const FormInput = ({
           isInvalid={hasError}
           {...rest}
         >
-          <option value="">Select {label}...</option>
+          <option value="">Seleccionar {label}...</option>
           {options.map((option) => (
             <option key={option.value || option} value={option.value || option}>
               {option.label || option}

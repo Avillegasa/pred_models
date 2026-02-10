@@ -38,6 +38,27 @@ const userService = {
    */
   deleteUser: async (userId) => {
     return authApi.delete(`/users/${userId}`);
+  },
+
+  /**
+   * Update user role (Admin only)
+   */
+  updateRole: async (userId, role) => {
+    return authApi.put(`/users/${userId}/role`, { role });
+  },
+
+  /**
+   * Update user permissions (Admin only, for analysts)
+   */
+  updatePermissions: async (userId, permissions) => {
+    return authApi.put(`/users/${userId}/permissions`, { permissions });
+  },
+
+  /**
+   * Reset user password (Admin only)
+   */
+  resetPassword: async (userId, newPassword) => {
+    return authApi.put(`/users/${userId}/password`, { new_password: newPassword });
   }
 };
 

@@ -27,7 +27,7 @@ export const formatDatetime = (datetime, includeTime = true) => {
 
   const date = typeof datetime === 'string' ? new Date(datetime) : datetime;
 
-  if (isNaN(date.getTime())) return 'Invalid date';
+  if (isNaN(date.getTime())) return 'Fecha invalida';
 
   if (includeTime) {
     return date.toLocaleString('es-ES', {
@@ -103,7 +103,7 @@ export const capitalize = (str) => {
  * @returns {string} Formatted label
  */
 export const formatPredictionLabel = (label) => {
-  if (!label) return 'Unknown';
+  if (!label) return 'Desconocido';
 
   // Convert to title case and remove underscores
   return label
@@ -156,18 +156,25 @@ export const formatSeverityLevel = (level) => {
     muted: '#808080'     // BCP gray-500
   };
 
-  if (!level) return { text: 'Unknown', color: colors.muted };
+  if (!level) return { text: 'Desconocido', color: colors.muted };
 
   const normalized = level.toLowerCase();
 
   const severityMap = {
-    critical: { text: 'Critical', color: colors.danger, icon: '🔴' },
-    severe: { text: 'Severe', color: colors.danger, icon: '🔴' },
-    high: { text: 'High', color: colors.danger, icon: '🟠' },
-    medium: { text: 'Medium', color: colors.warning, icon: '🟡' },
-    moderate: { text: 'Moderate', color: colors.warning, icon: '🟡' },
-    low: { text: 'Low', color: colors.info, icon: '🟢' },
-    minimal: { text: 'Minimal', color: colors.info, icon: '🟢' }
+    critical: { text: 'Critico', color: colors.danger, icon: '🔴' },
+    critico: { text: 'Critico', color: colors.danger, icon: '🔴' },
+    severe: { text: 'Severo', color: colors.danger, icon: '🔴' },
+    severo: { text: 'Severo', color: colors.danger, icon: '🔴' },
+    high: { text: 'Alto', color: colors.danger, icon: '🟠' },
+    alto: { text: 'Alto', color: colors.danger, icon: '🟠' },
+    medium: { text: 'Medio', color: colors.warning, icon: '🟡' },
+    medio: { text: 'Medio', color: colors.warning, icon: '🟡' },
+    moderate: { text: 'Moderado', color: colors.warning, icon: '🟡' },
+    moderado: { text: 'Moderado', color: colors.warning, icon: '🟡' },
+    low: { text: 'Bajo', color: colors.info, icon: '🟢' },
+    bajo: { text: 'Bajo', color: colors.info, icon: '🟢' },
+    minimal: { text: 'Minimo', color: colors.info, icon: '🟢' },
+    minimo: { text: 'Minimo', color: colors.info, icon: '🟢' }
   };
 
   return severityMap[normalized] || { text: capitalize(level), color: colors.muted, icon: '⚪' };
@@ -179,13 +186,13 @@ export const formatSeverityLevel = (level) => {
  * @returns {string} Text description
  */
 export const formatConfidenceLevel = (confidence) => {
-  if (confidence === undefined || confidence === null) return 'Unknown';
+  if (confidence === undefined || confidence === null) return 'Desconocido';
 
-  if (confidence >= 0.9) return 'Very High';
-  if (confidence >= 0.7) return 'High';
-  if (confidence >= 0.5) return 'Moderate';
-  if (confidence >= 0.3) return 'Low';
-  return 'Very Low';
+  if (confidence >= 0.9) return 'Muy Alto';
+  if (confidence >= 0.7) return 'Alto';
+  if (confidence >= 0.5) return 'Moderado';
+  if (confidence >= 0.3) return 'Bajo';
+  return 'Muy Bajo';
 };
 
 /**
@@ -194,7 +201,7 @@ export const formatConfidenceLevel = (confidence) => {
  * @returns {string} Formatted model name
  */
 export const formatModelName = (modelName) => {
-  if (!modelName) return 'Unknown Model';
+  if (!modelName) return 'Modelo Desconocido';
 
   // Remove (Mock) suffix if present
   return modelName.replace(/\s*\(Mock\)\s*/gi, '').trim();
@@ -206,7 +213,7 @@ export const formatModelName = (modelName) => {
  * @returns {string} User-friendly error message
  */
 export const formatErrorMessage = (error) => {
-  if (!error) return 'An unknown error occurred';
+  if (!error) return 'Ocurrio un error desconocido';
 
   if (typeof error === 'string') return error;
 
@@ -214,7 +221,7 @@ export const formatErrorMessage = (error) => {
 
   if (error.detail) return error.detail;
 
-  return 'An unexpected error occurred';
+  return 'Ocurrio un error inesperado';
 };
 
 // Export all formatters

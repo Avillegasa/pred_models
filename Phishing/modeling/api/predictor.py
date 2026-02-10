@@ -389,6 +389,108 @@ class PhishingPredictor:
             "total_indicators": indicator_count
         }
 
+    def _generate_metrics_analysis(self, email_data: dict) -> List[Dict]:
+        """
+        Generate metrics analysis comparing current values against normal ranges.
+        Returns a list of metric comparisons for the frontend to display.
+
+        Args:
+            email_data: Original email data (sender, subject, body, urls)
+
+        Returns:
+            List of metric analysis dictionaries
+        """
+        metrics_analysis = []
+
+        subject = email_data.get('subject', '')
+        body = email_data.get('body', '')
+        sender = email_data.get('sender', '')
+        has_urls = email_data.get('urls', 0) == 1
+
+        full_text = f"{subject} {body}"
+        full_text_lower = full_text.lower()
+
+        # Count URLs in text
+        url_matches = re.findall(r'https?://[^\s<>"]+|www\.[^\s<>"]+', full_text, re.IGNORECASE)
+        url_count = len(url_matches) + (1 if has_urls and not url_matches else 0)
+        url_anomalous = url_count > 5
+        metrics_analysis.append({
+            "metric_name": "Conteo de URLs",
+            "metric_key": "url_count",
+            "normal_range": {"min": 0, "max": 2},
+            "current_value": url_count,
+            "is_anomalous": url_anomalous,
+            "anomaly_direction": "high" if url_anomalous else None,
+            "interpretation": "Exceso de URLs puede indicar intento de redireccion maliciosa" if url_anomalous else "Cantidad de URLs dentro del rango normal para comunicacion legitima"
+        })
+
+        # Count urgent words
+        urgency_words = ['urgent', 'urgente', 'immediately', 'inmediatamente', 'asap', 'right now',
+                        'ahora mismo', 'expire', 'expira', 'limited time', 'tiempo limitado',
+                        'act now', 'actua ahora', 'hurry', 'rapido', '24 hours', '24 horas']
+        urgent_count = sum(1 for word in urgency_words if word in full_text_lower)
+        urgent_anomalous = urgent_count > 0
+        metrics_analysis.append({
+            "metric_name": "Palabras de Urgencia",
+            "metric_key": "urgent_words",
+            "normal_range": {"min": 0, "max": 0},
+            "current_value": urgent_count,
+            "is_anomalous": urgent_anomalous,
+            "anomaly_direction": "high" if urgent_anomalous else None,
+            "interpretation": "Presion psicologica detectada, tactica principal de phishing" if urgent_anomalous else "Sin lenguaje de urgencia, comunicacion normal"
+        })
+
+        # Count suspicious terms
+        suspicious_keywords = ['verify', 'account', 'suspended', 'click here', 'confirm',
+                              'password', 'winner', 'free', 'prize', 'congratulations',
+                              'selected', 'claim', 'reward', 'limited offer']
+        suspicious_count = sum(1 for word in suspicious_keywords if word in full_text_lower)
+        suspicious_anomalous = suspicious_count > 3
+        metrics_analysis.append({
+            "metric_name": "Terminos Sospechosos",
+            "metric_key": "suspicious_terms",
+            "normal_range": {"min": 0, "max": 1},
+            "current_value": suspicious_count,
+            "is_anomalous": suspicious_anomalous,
+            "anomaly_direction": "high" if suspicious_anomalous else None,
+            "interpretation": "Alto uso de vocabulario tipico de phishing" if suspicious_anomalous else "Terminologia dentro del rango normal"
+        })
+
+        # Count uppercase words (shouting)
+        uppercase_words = re.findall(r'\b[A-Z]{3,}\b', full_text)
+        uppercase_words = [w for w in uppercase_words if w not in ['URL', 'HTML', 'HTTP', 'HTTPS', 'WWW', 'CEO', 'USA', 'UK', 'PDF', 'FAQ']]
+        uppercase_count = len(uppercase_words)
+        uppercase_anomalous = uppercase_count > 3
+        metrics_analysis.append({
+            "metric_name": "Palabras en MAYUSCULAS",
+            "metric_key": "uppercase_count",
+            "normal_range": {"min": 0, "max": 2},
+            "current_value": uppercase_count,
+            "is_anomalous": uppercase_anomalous,
+            "anomaly_direction": "high" if uppercase_anomalous else None,
+            "interpretation": "Uso excesivo de mayusculas para crear urgencia" if uppercase_anomalous else "Uso normal de mayusculas"
+        })
+
+        # Check sender domain suspiciousness
+        sender_domain = sender.lower().split('@')[-1] if '@' in sender.lower() else ''
+        suspicious_sender_patterns = ['noreply', 'no-reply', 'support', 'security', 'alert', 'verify', 'update', 'admin']
+        sender_suspicious = any(p in sender.lower() for p in suspicious_sender_patterns)
+        # Check for known brands in text but not in sender domain
+        brand_names = ['paypal', 'amazon', 'apple', 'microsoft', 'netflix', 'facebook', 'google', 'linkedin', 'ebay']
+        brand_mismatch = any(brand in full_text_lower and brand not in sender_domain for brand in brand_names)
+        domain_suspicious = sender_suspicious or brand_mismatch
+        metrics_analysis.append({
+            "metric_name": "Dominio del Remitente",
+            "metric_key": "sender_domain",
+            "normal_range": {"min": 0, "max": 0},
+            "current_value": 1 if domain_suspicious else 0,
+            "is_anomalous": domain_suspicious,
+            "anomaly_direction": "high" if domain_suspicious else None,
+            "interpretation": f"Dominio sospechoso o no coincide con marca mencionada: {sender}" if domain_suspicious else "Dominio del remitente parece legitimo"
+        })
+
+        return metrics_analysis
+
     def predict_single(self, email_data: dict) -> dict:
         """
         Predict if a single email is phishing or legitimate.
@@ -427,7 +529,10 @@ class PhishingPredictor:
         # Step 4: Generate explanation
         explanation = self._generate_explanation(email_data, int(prediction), confidence)
 
-        # Step 5: Format response
+        # Step 5: Generate metrics analysis
+        metrics_analysis = self._generate_metrics_analysis(email_data)
+
+        # Step 6: Format response
         processing_time_ms = (time.time() - start_time) * 1000
 
         result = {
@@ -437,6 +542,7 @@ class PhishingPredictor:
             'probability_legitimate': float(probabilities[0]),
             'probability_phishing': float(probabilities[1]),
             'explanation': explanation,
+            'metrics_analysis': metrics_analysis,
             'metadata': {
                 'model': self.get_model_name(),
                 'features_count': self.get_features_count(),
@@ -477,17 +583,19 @@ class PhishingPredictor:
         predictions = self.model.predict(X)
         probabilities = self.model.predict_proba(X)
 
-        # Step 4: Format responses with explanations
+        # Step 4: Format responses with explanations and metrics analysis
         results = []
         for idx, (pred, probs, email) in enumerate(zip(predictions, probabilities, emails)):
             confidence = float(max(probs))
             explanation = self._generate_explanation(email, int(pred), confidence)
+            metrics_analysis = self._generate_metrics_analysis(email)
             results.append({
                 'email_index': idx,
                 'prediction': int(pred),
                 'prediction_label': 'Phishing' if pred == 1 else 'Legitimate',
                 'confidence': confidence,
-                'explanation': explanation
+                'explanation': explanation,
+                'metrics_analysis': metrics_analysis
             })
 
         processing_time_ms = (time.time() - start_time) * 1000

@@ -43,9 +43,9 @@ function AlertDetail({ show, onHide, alertId, onAcknowledge }) {
 
   const getModelInfo = (modelType) => {
     const info = {
-      phishing: { icon: <FaShieldAlt className="text-info" />, label: 'Phishing Detection' },
-      ato: { icon: <FaUserSecret className="text-warning" />, label: 'Account Takeover Detection' },
-      brute_force: { icon: <FaExclamationTriangle className="text-danger" />, label: 'Brute Force Detection' }
+      phishing: { icon: <FaShieldAlt className="text-info" />, label: 'Deteccion de Phishing' },
+      ato: { icon: <FaUserSecret className="text-warning" />, label: 'Deteccion de Toma de Cuenta' },
+      brute_force: { icon: <FaExclamationTriangle className="text-danger" />, label: 'Deteccion de Fuerza Bruta' }
     };
     return info[modelType] || { icon: <FaShieldAlt />, label: modelType };
   };

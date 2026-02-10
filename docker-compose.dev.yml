@@ -1,0 +1,91 @@
+# Docker Compose Override for Development
+# Enables hot-reload by mounting source code as volumes
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+version: "3.8"
+
+services:
+  # ============================================================================
+  # ML APIs with hot-reload
+  # ============================================================================
+
+  phishing-api:
+    volumes:
+      # Mount source code for hot-reload (read-write for __pycache__)
+      - ./Phishing/modeling/api:/app
+      - ./Phishing/modeling/src:/app/src
+      - ./Phishing/modeling/outputs:/app/outputs:ro
+    environment:
+      - RELOAD=true
+      - DEBUG=true
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  ato-api:
+    volumes:
+      # Mount source code for hot-reload
+      - ./Suspicious-Login-Activity/modeling/api:/app
+      - ./Suspicious-Login-Activity/modeling/src:/app/src
+      - ./Suspicious-Login-Activity/modeling/outputs:/app/outputs:ro
+    environment:
+      - RELOAD=true
+      - DEBUG=true
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+
+  brute-force-api:
+    volumes:
+      # Mount source code for hot-reload
+      - ./fuerza-bruta/api:/app
+      - ./fuerza-bruta/modeling/outputs:/app/outputs:ro
+    environment:
+      - RELOAD=true
+      - DEBUG=true
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+
+  # ============================================================================
+  # Auth Gateway with hot-reload
+  # ============================================================================
+
+  auth-gateway:
+    volumes:
+      # Mount source code for hot-reload
+      - ./auth-gateway/app:/app/app
+      # Persist database and uploads locally in dev
+      - ./auth-gateway/data:/app/data
+      - ./auth-gateway/uploads:/app/uploads
+    environment:
+      - RELOAD=true
+      - DEBUG=true
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
+
+  # ============================================================================
+  # Frontend with Vite Dev Server (hot-reload)
+  # ============================================================================
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      # Mount source code for hot-reload
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.js:/app/vite.config.js
+    ports:
+      # Override production port 80 with dev port 5173
+      - "5173:5173"
+      - "80:80"  # Keep for compatibility but won't be used
+    environment:
+      - VITE_PHISHING_API_URL=http://localhost:8000
+      - VITE_ATO_API_URL=http://localhost:8001
+      - VITE_BRUTE_FORCE_API_URL=http://localhost:8002
+      - VITE_AUTH_API_URL=http://localhost:8003
+      - VITE_API_TIMEOUT=10000
+      - VITE_DEBUG_MODE=true
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

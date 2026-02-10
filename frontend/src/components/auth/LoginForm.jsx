@@ -1,9 +1,9 @@
 /**
  * LoginForm Component
- * Form for user authentication - Swissborg dark theme
+ * Form for user authentication - BCP branding
  */
 import React, { useState } from 'react';
-import { FaUser, FaLock, FaSignInAlt, FaShieldAlt } from 'react-icons/fa';
+import { FaUser, FaLock, FaSignInAlt } from 'react-icons/fa';
 
 function LoginForm({ onSubmit, error, loading }) {
   const [username, setUsername] = useState('');
@@ -20,11 +20,13 @@ function LoginForm({ onSubmit, error, loading }) {
     <div className="login-card">
       {/* Header */}
       <div className="login-header">
-        <div className="login-logo">
-          <FaShieldAlt size={32} />
-        </div>
-        <h2 className="login-title">SOC Portal</h2>
-        <p className="login-subtitle">Sistema de Prediccion de Incidentes</p>
+        <img
+          src="/logo-bcp.png"
+          alt="BCP"
+          className="login-logo-img"
+        />
+        <h1 className="login-title">SISTEMA DE PREDICCION</h1>
+        <p className="login-subtitle">Deteccion Inteligente de Amenazas</p>
       </div>
 
       {/* Error message */}
@@ -110,24 +112,19 @@ function LoginForm({ onSubmit, error, loading }) {
           margin-bottom: 2rem;
         }
 
-        .login-logo {
-          width: 72px;
-          height: 72px;
-          margin: 0 auto 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--interactive-primary);
-          color: var(--text-inverse);
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-glow-primary);
+        .login-logo-img {
+          width: 120px;
+          height: auto;
+          margin-bottom: 1.25rem;
+          object-fit: contain;
         }
 
         .login-title {
           color: var(--text-primary);
-          font-size: 1.75rem;
+          font-size: 1.5rem;
           font-weight: 700;
           margin: 0 0 0.5rem;
+          letter-spacing: 1px;
         }
 
         .login-subtitle {
@@ -198,10 +195,10 @@ function LoginForm({ onSubmit, error, loading }) {
         }
 
         .login-button {
-          background: var(--interactive-primary);
+          background: linear-gradient(135deg, #004B8E 0%, #0066B8 100%);
           border: none;
           border-radius: var(--radius-md);
-          color: var(--interactive-primary-text);
+          color: #ffffff;
           padding: 0.875rem 1.5rem;
           font-size: 1rem;
           font-weight: 600;
@@ -215,8 +212,13 @@ function LoginForm({ onSubmit, error, loading }) {
         }
 
         .login-button:hover:not(:disabled) {
-          background: var(--interactive-primary-hover);
-          box-shadow: var(--shadow-glow-primary);
+          background: linear-gradient(135deg, #003d75 0%, #0055a3 100%);
+          box-shadow: 0 4px 15px rgba(0, 75, 142, 0.4);
+          transform: translateY(-1px);
+        }
+
+        .login-button:active:not(:disabled) {
+          transform: translateY(0);
         }
 
         .login-button:disabled {

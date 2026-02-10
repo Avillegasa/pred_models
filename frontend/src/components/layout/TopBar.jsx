@@ -58,7 +58,13 @@ function TopBar({ title }) {
             <>
               <div className="topbar-backdrop" onClick={() => setDropdownOpen(false)} />
               <div className="topbar-menu">
-                <button className="topbar-menu-item" disabled>
+                <button
+                  className="topbar-menu-item"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    navigate('/profile');
+                  }}
+                >
                   <FaUser />
                   <span>Perfil</span>
                 </button>

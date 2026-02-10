@@ -35,7 +35,7 @@ export const phishingService = {
       if (!emailData.sender || !emailData.subject || !emailData.body) {
         throw {
           type: 'validation',
-          message: 'Missing required fields: sender, subject, and body are required',
+          message: 'Campos requeridos faltantes: remitente, asunto y cuerpo son obligatorios',
           details: { emailData }
         };
       }
@@ -72,7 +72,7 @@ export const phishingService = {
       if (!Array.isArray(emails) || emails.length === 0) {
         throw {
           type: 'validation',
-          message: 'Emails must be a non-empty array',
+          message: 'Los emails deben ser un array no vacio',
           details: { emails }
         };
       }

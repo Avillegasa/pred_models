@@ -24,22 +24,22 @@ const ConfidenceMetrics = ({ prediction }) => {
   const legitProb = probability_legitimate ?? probability_normal ?? 0;
   const threatProb = probability_phishing ?? probability_attack ?? probability_bruteforce ?? 0;
 
-  const legitLabel = probability_legitimate !== undefined ? 'Legitimate' :
-                     probability_normal !== undefined ? 'Normal' : 'Safe';
+  const legitLabel = probability_legitimate !== undefined ? 'Legitimo' :
+                     probability_normal !== undefined ? 'Normal' : 'Seguro';
 
   const threatLabel = probability_phishing !== undefined ? 'Phishing' :
-                      probability_attack !== undefined ? 'Attack' :
-                      probability_bruteforce !== undefined ? 'Brute Force' : 'Threat';
+                      probability_attack !== undefined ? 'Ataque' :
+                      probability_bruteforce !== undefined ? 'Fuerza Bruta' : 'Amenaza';
 
   const isLegitimate = predictionValue === 0;
   const progressVariant = isLegitimate ? 'success' : 'danger';
 
   return (
     <div className="confidence-section">
-      <h6 className="confidence-title">Confidence Analysis</h6>
+      <h6 className="confidence-title">Analisis de Confianza</h6>
 
       <div className="confidence-score">
-        <span className="confidence-label">Confidence</span>
+        <span className="confidence-label">Confianza</span>
         <span className="confidence-value">{formatPercentage(confidence)}</span>
       </div>
 

@@ -41,15 +41,15 @@ class ErrorBoundary extends React.Component {
           <Alert variant="danger">
             <Alert.Heading>
               <FiAlertTriangle className="me-2" />
-              Something went wrong
+              Algo salio mal
             </Alert.Heading>
             <p>
-              An unexpected error occurred. Please try reloading the page.
+              Ocurrio un error inesperado. Por favor intente recargar la pagina.
             </p>
             <hr />
             {this.state.error && (
               <details className="mb-3">
-                <summary style={{ cursor: 'pointer' }}>Error details</summary>
+                <summary style={{ cursor: 'pointer' }}>Detalles del error</summary>
                 <pre className="mt-2" style={{ fontSize: '0.875rem' }}>
                   {this.state.error.toString()}
                   {this.state.errorInfo && this.state.errorInfo.componentStack}
@@ -57,7 +57,7 @@ class ErrorBoundary extends React.Component {
               </details>
             )}
             <button className="btn btn-danger" onClick={this.handleReload}>
-              Reload Page
+              Recargar Pagina
             </button>
           </Alert>
         </Container>

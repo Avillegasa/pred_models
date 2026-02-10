@@ -25,9 +25,9 @@ const THEME_COLORS = {
 export const MODEL_METADATA = {
   [MODEL_TYPES.PHISHING]: {
     id: MODEL_TYPES.PHISHING,
-    name: 'Phishing Detection',
+    name: 'Deteccion de Phishing',
     shortName: 'Phishing',
-    description: 'Detects phishing emails using machine learning',
+    description: 'Detecta emails de phishing usando aprendizaje automatico',
     icon: '📧',
     status: 'active', // 'active' or 'mock'
     color: THEME_COLORS.info,
@@ -35,9 +35,9 @@ export const MODEL_METADATA = {
   },
   [MODEL_TYPES.ATAQUES_SOSPECHOSOS]: {
     id: MODEL_TYPES.ATAQUES_SOSPECHOSOS,
-    name: 'Account Takeover Detection',
+    name: 'Deteccion de Toma de Cuenta',
     shortName: 'Logins Sospechosos',
-    description: 'Detects account takeover attempts using behavioral analysis',
+    description: 'Detecta intentos de toma de cuenta usando analisis de comportamiento',
     icon: '🔐',
     status: 'active', // 'active' or 'mock'
     color: THEME_COLORS.danger,
@@ -45,9 +45,9 @@ export const MODEL_METADATA = {
   },
   [MODEL_TYPES.FUERZA_BRUTA]: {
     id: MODEL_TYPES.FUERZA_BRUTA,
-    name: 'Brute Force Attack Detection',
+    name: 'Deteccion de Fuerza Bruta',
     shortName: 'Fuerza Bruta',
-    description: 'Detects brute force attacks using network traffic analysis (Random Forest)',
+    description: 'Detecta ataques de fuerza bruta usando analisis de trafico de red (Random Forest)',
     icon: '🌐',
     status: 'active', // 'active' or 'mock'
     color: THEME_COLORS.warning,
@@ -122,7 +122,7 @@ export const predictWithModel = async (modelType, data) => {
       success: false,
       error: {
         type: 'service',
-        message: `Failed to get prediction from ${modelType} model`,
+        message: `Error al obtener prediccion del modelo ${modelType}`,
         originalError: error
       }
     };
@@ -160,7 +160,7 @@ export const getModelInfo = async (modelType) => {
       success: false,
       error: {
         type: 'service',
-        message: `Failed to get model info for ${modelType}`,
+        message: `Error al obtener informacion del modelo ${modelType}`,
         originalError: error
       }
     };
@@ -195,7 +195,7 @@ export const healthCheck = async (modelType) => {
       success: false,
       error: {
         type: 'service',
-        message: `Health check failed for ${modelType}`,
+        message: `Verificacion de estado fallida para ${modelType}`,
         originalError: error
       }
     };

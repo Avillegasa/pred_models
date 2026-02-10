@@ -329,6 +329,104 @@ class BruteForcePredictor:
             "total_indicators": num_indicators
         }
 
+    def _generate_metrics_analysis(self, flow_data: Dict) -> List[Dict]:
+        """
+        Generate metrics analysis comparing current values against normal ranges.
+        Returns a list of metric comparisons for the frontend to display.
+
+        Args:
+            flow_data: Dictionary with network flow data (normalized 0-1)
+
+        Returns:
+            List of metric analysis dictionaries
+        """
+        metrics_analysis = []
+
+        # Define metric configurations: (key, name, normal_min, normal_max, high_threshold, interpretation_high, interpretation_low)
+        metric_configs = [
+            {
+                "metric_key": "bwd_pkts_s",
+                "metric_name": "Backward Packets/s",
+                "normal_range": {"min": 0.001, "max": 0.01},
+                "anomaly_threshold_high": 0.5,
+                "anomaly_threshold_low": None,
+                "interpretation_high": "Velocidad de respuesta extremadamente alta, tipico de ataques automatizados",
+                "interpretation_low": None,
+                "interpretation_normal": "Tasa de paquetes de respuesta dentro del rango normal"
+            },
+            {
+                "metric_key": "flow_pkts_s",
+                "metric_name": "Flow Packets/s",
+                "normal_range": {"min": 0.01, "max": 0.05},
+                "anomaly_threshold_high": 0.3,
+                "anomaly_threshold_low": None,
+                "interpretation_high": "Tasa de flujo muy alta, patron tipico de trafico automatizado",
+                "interpretation_low": None,
+                "interpretation_normal": "Tasa de paquetes de flujo dentro del rango esperado"
+            },
+            {
+                "metric_key": "flow_duration",
+                "metric_name": "Flow Duration",
+                "normal_range": {"min": 0.3, "max": 0.7},
+                "anomaly_threshold_high": None,
+                "anomaly_threshold_low": 0.01,
+                "interpretation_high": None,
+                "interpretation_low": "Conexiones extremadamente cortas, tipico de scripts automatizados",
+                "interpretation_normal": "Duracion de conexion dentro del rango normal"
+            },
+            {
+                "metric_key": "fwd_pkts_s",
+                "metric_name": "Forward Packets/s",
+                "normal_range": {"min": 0.01, "max": 0.05},
+                "anomaly_threshold_high": 0.3,
+                "anomaly_threshold_low": None,
+                "interpretation_high": "Alto volumen de solicitudes salientes, indicador de envio masivo",
+                "interpretation_low": None,
+                "interpretation_normal": "Tasa de envio de paquetes dentro del rango normal"
+            },
+            {
+                "metric_key": "psh_flag_cnt",
+                "metric_name": "PSH Flag Count",
+                "normal_range": {"min": 0.1, "max": 0.3},
+                "anomaly_threshold_high": 0.5,
+                "anomaly_threshold_low": None,
+                "interpretation_high": "Alto uso de flag PSH, firma de herramientas de ataque automatizadas",
+                "interpretation_low": None,
+                "interpretation_normal": "Conteo de flags PSH dentro del rango esperado"
+            }
+        ]
+
+        for config in metric_configs:
+            current_value = flow_data.get(config["metric_key"], 0)
+            normal_min = config["normal_range"]["min"]
+            normal_max = config["normal_range"]["max"]
+
+            # Determine if anomalous and direction
+            is_anomalous = False
+            anomaly_direction = None
+            interpretation = config["interpretation_normal"]
+
+            if config["anomaly_threshold_high"] is not None and current_value >= config["anomaly_threshold_high"]:
+                is_anomalous = True
+                anomaly_direction = "high"
+                interpretation = config["interpretation_high"]
+            elif config["anomaly_threshold_low"] is not None and current_value <= config["anomaly_threshold_low"]:
+                is_anomalous = True
+                anomaly_direction = "low"
+                interpretation = config["interpretation_low"]
+
+            metrics_analysis.append({
+                "metric_name": config["metric_name"],
+                "metric_key": config["metric_key"],
+                "normal_range": config["normal_range"],
+                "current_value": round(current_value, 6),
+                "is_anomalous": is_anomalous,
+                "anomaly_direction": anomaly_direction,
+                "interpretation": interpretation
+            })
+
+        return metrics_analysis
+
     def predict_single(self, flow_data: Dict) -> Dict:
         """
         Predict a single network flow.
@@ -355,6 +453,9 @@ class BruteForcePredictor:
         # Generate explanation
         explanation = self._generate_explanation(flow_data, int(prediction), confidence)
 
+        # Generate metrics analysis
+        metrics_analysis = self._generate_metrics_analysis(flow_data)
+
         # Calculate processing time
         processing_time_ms = (time.time() - start_time) * 1000
 
@@ -367,6 +468,7 @@ class BruteForcePredictor:
                 "Brute Force": float(probabilities[1])
             },
             "explanation": explanation,
+            "metrics_analysis": metrics_analysis,
             "processing_time_ms": round(processing_time_ms, 2),
             "model_name": self.model_name
         }
@@ -394,12 +496,13 @@ class BruteForcePredictor:
         # Calculate processing time
         processing_time_ms = (time.time() - start_time) * 1000
 
-        # Format results with explanations
+        # Format results with explanations and metrics analysis
         results = []
         for idx, (pred, probs, flow) in enumerate(zip(predictions, probabilities, flows_data)):
             prediction_label = "Brute Force" if pred == 1 else "Benign"
             confidence = float(probs[pred])
             explanation = self._generate_explanation(flow, int(pred), confidence)
+            metrics_analysis = self._generate_metrics_analysis(flow)
 
             results.append({
                 "index": idx,
@@ -410,7 +513,8 @@ class BruteForcePredictor:
                     "Benign": float(probs[0]),
                     "Brute Force": float(probs[1])
                 },
-                "explanation": explanation
+                "explanation": explanation,
+                "metrics_analysis": metrics_analysis
             })
 
         return results, processing_time_ms

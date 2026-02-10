@@ -6,47 +6,47 @@
 // Phishing Test Cases
 export const phishingTestCases = [
   {
-    name: 'Obvious Phishing Attack',
+    name: 'Ataque de Phishing Obvio',
     data: {
       sender: 'urgent-verify@suspicious-bank.com',
       receiver: 'user@company.com',
-      subject: 'URGENT: Verify your account NOW!!!',
-      body: 'Your account will be suspended in 24 hours. Click here immediately to verify: http://fake-bank-verify.com/login',
+      subject: 'URGENTE: Verifique su cuenta AHORA!!!',
+      body: 'Su cuenta sera suspendida en 24 horas. Haga clic aqui inmediatamente para verificar: http://fake-bank-verify.com/login',
       urls: 1
     },
     expectedPrediction: 1,
-    description: 'Classic phishing email with urgency, suspicious domain, and malicious link'
+    description: 'Email de phishing clasico con urgencia, dominio sospechoso y enlace malicioso'
   },
   {
-    name: 'Legitimate Business Email',
+    name: 'Email Empresarial Legitimo',
     data: {
-      sender: 'hr@company.com',
-      receiver: 'employee@company.com',
-      subject: 'Team Meeting - Friday 2PM',
-      body: 'Hi team, reminder about our weekly sync meeting this Friday at 2PM in Conference Room B. Please review the attached agenda.',
+      sender: 'rrhh@company.com',
+      receiver: 'empleado@company.com',
+      subject: 'Reunion de Equipo - Viernes 2PM',
+      body: 'Hola equipo, recordatorio sobre nuestra reunion semanal este viernes a las 2PM en la Sala de Conferencias B. Por favor revisen la agenda adjunta.',
       urls: 0
     },
     expectedPrediction: 0,
-    description: 'Normal internal business communication'
+    description: 'Comunicacion empresarial interna normal'
   },
   {
-    name: 'Nigerian Prince Scam',
+    name: 'Estafa del Principe Nigeriano',
     data: {
       sender: 'prince@nigeria.ng',
-      receiver: 'victim@example.com',
-      subject: 'Urgent Business Proposal',
-      body: 'Dear Sir/Madam, I am Prince of Nigeria and I need your help to transfer $10 million. You will receive 20% commission. Contact me urgently.',
+      receiver: 'victima@example.com',
+      subject: 'Propuesta de Negocio Urgente',
+      body: 'Estimado/a, Soy Principe de Nigeria y necesito su ayuda para transferir $10 millones. Recibira 20% de comision. Contacteme urgentemente.',
       urls: 0
     },
     expectedPrediction: 1,
-    description: 'Classic advance-fee scam email'
+    description: 'Email clasico de estafa de pago anticipado'
   }
 ];
 
 // Network Attack Test Cases
 export const networkAttackTestCases = [
   {
-    name: 'Port Scanning Attack',
+    name: 'Ataque de Escaneo de Puertos',
     data: {
       sourceIp: '203.0.113.5',
       port: 8888,
@@ -56,10 +56,10 @@ export const networkAttackTestCases = [
       payload: ''
     },
     expectedPrediction: 1,
-    description: 'High packet count to uncommon port indicates port scanning'
+    description: 'Alto conteo de paquetes a puerto poco comun indica escaneo de puertos'
   },
   {
-    name: 'Normal HTTPS Traffic',
+    name: 'Trafico HTTPS Normal',
     data: {
       sourceIp: '192.168.1.50',
       port: 443,
@@ -69,10 +69,10 @@ export const networkAttackTestCases = [
       payload: ''
     },
     expectedPrediction: 0,
-    description: 'Normal web browsing traffic'
+    description: 'Trafico normal de navegacion web'
   },
   {
-    name: 'ICMP Flood Attack',
+    name: 'Ataque de Inundacion ICMP',
     data: {
       sourceIp: '198.51.100.100',
       port: 0,
@@ -82,10 +82,10 @@ export const networkAttackTestCases = [
       payload: ''
     },
     expectedPrediction: 1,
-    description: 'High ICMP packet count indicates flood attack'
+    description: 'Alto conteo de paquetes ICMP indica ataque de inundacion'
   },
   {
-    name: 'SSH Connection',
+    name: 'Conexion SSH',
     data: {
       sourceIp: '192.168.1.100',
       port: 22,
@@ -95,14 +95,14 @@ export const networkAttackTestCases = [
       payload: ''
     },
     expectedPrediction: 0,
-    description: 'Normal SSH connection attempt'
+    description: 'Intento de conexion SSH normal'
   }
 ];
 
 // Brute Force Test Cases
 export const bruteForceTestCases = [
   {
-    name: 'Obvious Brute Force Attack',
+    name: 'Ataque de Fuerza Bruta Obvio',
     data: {
       username: 'root',
       sourceIp: '198.51.100.23',
@@ -112,12 +112,12 @@ export const bruteForceTestCases = [
       lastSuccessful: ''
     },
     expectedPrediction: 1,
-    description: 'High velocity SSH brute force on root account'
+    description: 'Fuerza bruta SSH de alta velocidad en cuenta root'
   },
   {
-    name: 'Normal Failed Login',
+    name: 'Fallo de Login Normal',
     data: {
-      username: 'john.doe',
+      username: 'juan.perez',
       sourceIp: '192.168.1.100',
       failedAttempts: 2,
       timeWindow: 120,
@@ -125,10 +125,10 @@ export const bruteForceTestCases = [
       lastSuccessful: new Date(Date.now() - 86400000).toISOString().slice(0, 16)
     },
     expectedPrediction: 0,
-    description: 'User typo - normal activity'
+    description: 'Error de tipeo del usuario - actividad normal'
   },
   {
-    name: 'FTP Brute Force',
+    name: 'Fuerza Bruta FTP',
     data: {
       username: 'admin',
       sourceIp: '203.0.113.77',
@@ -138,12 +138,12 @@ export const bruteForceTestCases = [
       lastSuccessful: ''
     },
     expectedPrediction: 1,
-    description: 'Rapid FTP login attempts on admin account'
+    description: 'Intentos rapidos de login FTP en cuenta admin'
   },
   {
-    name: 'Forgotten Password',
+    name: 'Contrasena Olvidada',
     data: {
-      username: 'alice.smith',
+      username: 'maria.garcia',
       sourceIp: '192.168.1.55',
       failedAttempts: 5,
       timeWindow: 30,
@@ -151,7 +151,7 @@ export const bruteForceTestCases = [
       lastSuccessful: new Date(Date.now() - 172800000).toISOString().slice(0, 16)
     },
     expectedPrediction: 0,
-    description: 'User trying to remember password - low risk'
+    description: 'Usuario intentando recordar contrasena - bajo riesgo'
   }
 ];
 

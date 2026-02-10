@@ -1,7 +1,8 @@
 """
 Database configuration and session management
 """
-from sqlalchemy import create_engine
+import json
+from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import get_settings
@@ -27,7 +28,35 @@ def get_db():
         db.close()
 
 
+def run_migrations():
+    """Run database migrations for schema changes"""
+    inspector = inspect(engine)
+
+    # Check if users table exists
+    if 'users' in inspector.get_table_names():
+        columns = [col['name'] for col in inspector.get_columns('users')]
+
+        # Migration: Add permissions column if it doesn't exist
+        if 'permissions' not in columns:
+            print("Running migration: Adding 'permissions' column to users table...")
+            default_permissions = json.dumps({
+                "dashboard": True,
+                "predictions": False,
+                "reports": True,
+                "alerts": True
+            })
+            with engine.connect() as conn:
+                conn.execute(text(
+                    f"ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT '{default_permissions}'"
+                ))
+                conn.commit()
+            print("Migration completed: 'permissions' column added.")
+
+
 def init_db():
     """Initialize database tables"""
-    from .models import user, file, report, alert  # noqa: F401
+    from .models import user, file, report, alert, prediction  # noqa: F401
     Base.metadata.create_all(bind=engine)
+
+    # Run migrations for existing databases
+    run_migrations()
