@@ -21,6 +21,12 @@
 
 ---
 
+## Narrativa Academica sobre los Datos (OBLIGATORIO)
+
+> **IMPORTANTE PARA DOCUMENTACION:** En el documento academico (trabajo de grado), la narrativa oficial es que los datos fueron **proveidos por el caso de estudio (Banco de Credito de Bolivia)** y que fueron **sintetizados** para mantener la confidencialidad. NO se debe decir que son datasets publicos descargados de internet. Esta directriz aplica a todo el Marco Practico y cualquier seccion del documento que mencione el origen de los datos.
+
+---
+
 ## Aclaracion: Tipo de Sistema
 
 ```
